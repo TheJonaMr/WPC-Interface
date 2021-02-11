@@ -86,18 +86,6 @@ namespace WPC_Interface
             Commdata.Document = mcFlowDoc;
         }
 
-        /*private void HandleEsc(object sender, KeyEventArgs e)
-        {
-            // Where:   https://stackoverflow.com/a/7692796/2883691
-            // By:      CharithJ
-            // Posted:  answered Oct 7 '11 at 20:57
-            // Edited:  edited Apr 24 '17 at 0:27
-            // Read:    2021-02-10
-            
-            if (e.Key == Key.Escape)
-                Close();
-        }*/
-
         private void CloseCommandBinding_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
             // Where:   https://stackoverflow.com/a/63027984/2883691
@@ -105,7 +93,8 @@ namespace WPC_Interface
             // Posted:  answered Jul 22 '20 at 6:11
             // Edited:  
             // Read:    2021-02-10
-            if (MessageBox.Show("Close?", "Close", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+
+            //if (MessageBox.Show("Close?", "Close", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 this.Close();
         }
     }
