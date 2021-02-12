@@ -49,11 +49,11 @@ namespace WPC_Interface
             #endregion
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        /*private void Button_Click(object sender, RoutedEventArgs e)
         {
             counter++;
             label1.Content = "Text, hello: " + counter.ToString();
-        }
+        }*/
 
         private void con_btn_Click(object sender, RoutedEventArgs e)
         {

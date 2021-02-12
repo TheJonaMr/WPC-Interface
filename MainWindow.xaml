@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPC_Interface"
         mc:Ignorable="d"
-        Title="WPC Interface" Height="480" Width="860.577">
+        Title="WPC Interface" Height="480" Width="977.245">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
@@ -20,7 +20,7 @@
     </Window.CommandBindings>
 
     <Grid>
-        <RichTextBox x:Name="Commdata" Margin="652,61,10,40" IsReadOnly="True">
+        <RichTextBox x:Name="Commdata" Margin="652,61,0,70" IsReadOnly="True" HorizontalAlignment="Left" Width="288">
             <FlowDocument>
                 <Paragraph>
                     <Run Text="sdfdfdf"/>
@@ -30,39 +30,87 @@
         <TabControl HorizontalAlignment="Left" Height="374" VerticalAlignment="Top" Width="647" Margin="0,35,0,0">
             <TabItem Header="Configuration">
                 <Grid Background="#FFE5E5E5" Height="354" VerticalAlignment="Bottom">
-                    <Label x:Name="label1" Content="Serial settings" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
-                    <Button Content="Select logfile" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="232,58,0,0" Click="Button_Click" Height="20"/>
-                    <Button x:Name="con_btn" Content="Connect" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="10,98,0,0" Click="con_btn_Click" Height="20"/>
-                    <Label x:Name="label1_Copy1" Content="COM Port:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,36,0,0" Width="76" Height="26"/>
-                    <Label x:Name="label1_Copy2" Content="Baud Rate:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,67,0,0" Width="76" Height="26"/>
-                    <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Width="91" Margin="91,38,0,0">
+                    <Label Content="Serial settings" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
+                    <Button x:Name="sel_log_btn" Content="Select logfile" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="232,44,0,0" Height="20"/>
+                    <Button x:Name="con_btn" Content="Connect" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="10,146,0,0" Click="con_btn_Click" Height="20"/>
+                    <Label Content="COM Port:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,36,0,0" Width="76" Height="26"/>
+                    <Label Content="Baud Rate:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="9,63,0,0" Width="76" Height="26"/>
+                    <ComboBox x:Name="COM_box" HorizontalAlignment="Left" VerticalAlignment="Top" Width="91" Margin="91,38,0,0">
                         <ComboBoxItem Content="COM1" IsSelected="True"/>
                         <ComboBoxItem Content="COM2"/>
                     </ComboBox>
-                    <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Width="91" Margin="91,69,0,0">
+                    <ComboBox x:Name="Baud_box" HorizontalAlignment="Left" VerticalAlignment="Top" Width="91" Margin="91,65,0,0">
                         <ComboBoxItem Content="1200"/>
                         <ComboBoxItem Content="2400"/>
                         <ComboBoxItem Content="4800"/>
                         <ComboBoxItem Content="9600" IsSelected="True"/>
                     </ComboBox>
-                    <Button x:Name="con_btn_Copy" Content="Disconnect" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="107,98,0,0" Click="con_btn_Click" Height="20"/>
-                    <Label x:Name="label1_Copy3" Content="Logging configuration" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="232,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
-                    <CheckBox Content="New logfile" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="232,38,0,0"/>
-                    <Label x:Name="label1_Copy4" Content="No file chosen" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="312,55,0,0" Width="172" Height="26"/>
+                    <Button x:Name="dcon_btn" Content="Disconnect" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="107,146,0,0" Click="con_btn_Click" Height="20"/>
+                    <Label Content="Logging configuration" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="232,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
+                    <CheckBox x:Name="new_logfile_chk" Content="New logfile" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="312,72,0,0"/>
+                    <Label x:Name="logfile_label1" Content="No file chosen" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="312,41,0,0" Width="172" Height="26"/>
+                    <Button x:Name="create_log_btn" Content="Create logfile" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="232,69,0,0" Height="20"/>
+                    <Label Content="Something else" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="459,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
+                    <Label Content="Databits:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,90,0,0" Width="76" Height="26"/>
+                    <ComboBox x:Name="Baud_box_Copy" HorizontalAlignment="Left" VerticalAlignment="Top" Width="91" Margin="91,92,0,0">
+                        <ComboBoxItem Content="6"/>
+                        <ComboBoxItem Content="7"/>
+                        <ComboBoxItem Content="8" IsSelected="True"/>
+                        <ComboBoxItem Content="9"/>
+                    </ComboBox>
+                    <Label Content="Parity:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,117,0,0" Width="76" Height="26"/>
+                    <ComboBox x:Name="Baud_box_Copy1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="91" Margin="91,119,0,0">
+                        <ComboBoxItem IsSelected="True">
+                            <!--    // Where:   https://stackoverflow.com/a/7762562/2883691
+                                    // By:      Ashley Davis
+                                    // Posted:  answered Oct 14 '11 at 2:48
+                                    // Edited:  edited Oct 18 '12 at 20:14
+                                    // Read:    2021-02-12                                          -->
+                            <TextBlock><Bold>N</Bold> - NONE</TextBlock>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock><Bold>E</Bold> - EVEN</TextBlock>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock><Bold>O</Bold> - ODD</TextBlock>
+                        </ComboBoxItem>
+                    </ComboBox>
                 </Grid>
             </TabItem>
             <TabItem Header="Controls">
                 <Grid Background="#FFE5E5E5" Height="354" VerticalAlignment="Bottom">
-                    <Label Content="Put something here :)" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="205,132,0,0" RenderTransformOrigin="0.5,0.5" Height="94" Width="228">
-                        <Label.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform/>
-                                <SkewTransform/>
-                                <RotateTransform Angle="25.088"/>
-                                <TranslateTransform/>
-                            </TransformGroup>
-                        </Label.RenderTransform>
-                    </Label>
+                    <Label Content="Sensors" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
+                    <Label Content="Transistors" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="232,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
+                    <Label Content="Communication" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="459,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
+                    <CheckBox Content="Pass external data" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="459,204,0,0"/>
+                    <CheckBox Content="Power electronics" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="232,41,0,0"/>
+                    <CheckBox Content="Read sensors" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,41,0,0"/>
+                    <Label Content="Baud Rate:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="459,224,0,0" Width="76" Height="26"/>
+                    <ComboBox x:Name="ext_baud_box" HorizontalAlignment="Left" VerticalAlignment="Top" Width="91" Margin="540,226,0,0">
+                        <ComboBoxItem Content="1200"/>
+                        <ComboBoxItem Content="2400"/>
+                        <ComboBoxItem Content="4800"/>
+                        <ComboBoxItem Content="9600" IsSelected="True"/>
+                    </ComboBox>
+                    <Label Content="External Communication" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="459,173,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
+                    <Label Content="Baud Rate:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="459,39,0,0" Width="76" Height="26"/>
+                    <ComboBox x:Name="sys_baud_box" HorizontalAlignment="Left" VerticalAlignment="Top" Width="91" Margin="540,41,0,0">
+                        <ComboBoxItem Content="1200"/>
+                        <ComboBoxItem Content="2400"/>
+                        <ComboBoxItem Content="4800"/>
+                        <ComboBoxItem Content="9600" IsSelected="True"/>
+                    </ComboBox>
+                    <Button Content="Apply" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="460,148,0,0" RenderTransformOrigin="-0.947,3.05"/>
+                    <Button Content="Apply" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="459,324,0,0"/>
+                    <Label Content="Total sent:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="460,255,0,0"/>
+                    <Label Content="Total received:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="460,281,0,0"/>
+                    <Label Content="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="550,255,0,0" Width="81"/>
+                    <Label Content="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="550,281,0,0" Width="81"/>
+                    <Label Content="Total sent:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="460,90,0,0"/>
+                    <Label Content="Total received:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="460,116,0,0"/>
+                    <Label Content="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="550,90,0,0" Width="81"/>
+                    <Label Content="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="550,116,0,0" Width="81"/>
+                    <CheckBox Content="Parity" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="462,70,0,0"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Plot">
@@ -75,11 +123,15 @@
         <ToolBar Height="30" VerticalAlignment="Top" Header="">
             <ListBoxItem Content="test"/>
         </ToolBar>
-        <Label x:Name="label1_Copy5" Content="Selected logfile: No logfile active/chosen" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,414,0,0" Width="442" Height="26"/>
-        <Label x:Name="label1_Copy6" Content="Not connected" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="754,414,0,0" Width="89" Height="26"/>
-        <Label x:Name="label1_Copy7" Content="R: 0%" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="689,414,0,0" Width="65" Height="26"/>
-        <Label x:Name="label1_Copy8" Content="B: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="624,414,0,0" Width="65" Height="26"/>
-        <Label x:Name="label1_Copy9" Content="G: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="559,414,0,0" Width="65" Height="26" RenderTransformOrigin="0.441,0.513"/>
-        <Label x:Name="label1_Copy10" Content="T: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="494,414,0,0" Width="65" Height="26"/>
+        <Label x:Name="logfile_label2" Content="Selected logfile: No logfile active/chosen" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,414,0,0" Width="595" Height="26" Background="#FFF0F0F0"/>
+        <Label x:Name="con_label" Content="Not connected" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="870,414,0,0" Width="89" Height="26" Background="#FFFFC8C8"/>
+        <Label x:Name="comm_rate_label" Content="R: 0%" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="805,414,0,0" Width="65" Height="26" Background="#FFF0F0F0"/>
+        <Label x:Name="comm_bad_label" Content="B: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="740,414,0,0" Width="65" Height="26" Background="#FFF0F0F0"/>
+        <Label x:Name="comm_good_label" Content="G: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="675,414,0,0" Width="65" Height="26" RenderTransformOrigin="0.441,0.513" Background="#FFF0F0F0"/>
+        <Label x:Name="comm_total_label" Content="T: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="610,414,0,0" Width="65" Height="26" Background="#FFF0F0F0"/>
+        <Button x:Name="clr_btn" Content="Clear" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="865,384,0,0"/>
+        <CheckBox x:Name="raw_en" Content="Enabled" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="762,387,0,0" IsChecked="True"/>
+        <CheckBox x:Name="auto_scroll_raw" Content="Autoscroll" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="652,387,0,0" IsChecked="True"/>
+        <ScrollBar Margin="940,61,0,70" Width="17" HorizontalAlignment="Left"/>
     </Grid>
 </Window>
