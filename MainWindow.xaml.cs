@@ -29,8 +29,6 @@ namespace WPC_Interface
     public partial class MainWindow : Window
     {
         #region variables
-        private int counter = 0;
-
         //Richtextbox
         FlowDocument mcFlowDoc = new FlowDocument();
         Paragraph para = new Paragraph();
@@ -39,9 +37,9 @@ namespace WPC_Interface
         SerialPort serial = new SerialPort();
         string recieved_data;
 
-        int comm_total = 0;
-        int comm_good = 0;
-        int comm_bad = 0;
+        private int comm_total = 0;
+        private int comm_good = 0;
+        private int comm_bad = 0;
 
         #endregion
 
@@ -66,39 +64,10 @@ namespace WPC_Interface
             #endregion
 
             Commdata.Document = mcFlowDoc;
-        }
-
-        private void con_btn_Click(object sender, RoutedEventArgs e)
-        {
-            serial.PortName = COM_box.SelectedValue.ToString();              
-            serial.BaudRate = Convert.ToInt32(Baud_box.SelectedValue.ToString());
-            serial.DataBits = Convert.ToInt32(Data_box.SelectedValue.ToString());
-            
-            if (Stop_box.SelectedValue.ToString() == "1")           serial.StopBits = StopBits.One;
-            else if (Stop_box.SelectedValue.ToString() == "1.5")    serial.StopBits = StopBits.OnePointFive;
-            else if (Stop_box.SelectedValue.ToString() == "2")      serial.StopBits = StopBits.Two;
-
-            if (Parity_box_N.IsSelected)            serial.Parity = Parity.None;
-            else if (Parity_box_E.IsSelected)       serial.Parity = Parity.Even;
-            else if (Parity_box_O.IsSelected)       serial.Parity = Parity.Odd;
-
-            serial.Handshake = System.IO.Ports.Handshake.None;
-            serial.ReadTimeout = 200;
-            serial.WriteTimeout = 50;
-
             serial.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(Recieve);
-
-            serial.Open();
-
-            BrushConverter bc = new BrushConverter();
-            Brush brush = (Brush)bc.ConvertFrom("#FFD7FF92");
-            brush.Freeze();
-            con_status_label.Background = brush;
-
-            con_btn.IsEnabled = false;
-            dcon_btn.IsEnabled = true;
-            con_status_label.Content = "Connected";
         }
+
+        #region Recieving Serial Data
 
         private delegate void UpdateUiTextDelegate(string text);
         private void Recieve(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
@@ -122,6 +91,40 @@ namespace WPC_Interface
             // Assign the value of the recieved_data to the RichTextBox.
             para.Inlines.Add(text);
             mcFlowDoc.Blocks.Add(para);
+        }
+
+        #endregion
+
+        #region Form Controls
+
+        private void con_btn_Click(object sender, RoutedEventArgs e)
+        {
+            serial.PortName = COM_box.SelectedValue.ToString();
+            serial.BaudRate = Convert.ToInt32(Baud_box.SelectedValue.ToString());
+            serial.DataBits = Convert.ToInt32(Data_box.SelectedValue.ToString());
+
+            if (Stop_box.SelectedValue.ToString() == "1") serial.StopBits = StopBits.One;
+            else if (Stop_box.SelectedValue.ToString() == "1.5") serial.StopBits = StopBits.OnePointFive;
+            else if (Stop_box.SelectedValue.ToString() == "2") serial.StopBits = StopBits.Two;
+
+            if (Parity_box_N.IsSelected) serial.Parity = Parity.None;
+            else if (Parity_box_E.IsSelected) serial.Parity = Parity.Even;
+            else if (Parity_box_O.IsSelected) serial.Parity = Parity.Odd;
+
+            serial.Handshake = System.IO.Ports.Handshake.None;
+            serial.ReadTimeout = 200;
+            serial.WriteTimeout = 50;
+
+            serial.Open();
+
+            BrushConverter bc = new BrushConverter();
+            Brush brush = (Brush)bc.ConvertFrom("#FFD7FF92");
+            brush.Freeze();
+            con_status_label.Background = brush;
+
+            con_btn.IsEnabled = false;
+            dcon_btn.IsEnabled = true;
+            con_status_label.Content = "Connected";
         }
 
         private void CloseCommandBinding_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
@@ -160,5 +163,7 @@ namespace WPC_Interface
         {
             if (auto_scroll_raw.IsChecked.Value) Commdata.ScrollToEnd();
         }
+
+        #endregion
     }
 }
