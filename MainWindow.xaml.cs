@@ -12,8 +12,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
-// https://www.codeproject.com/Articles/130109/Serial-Communication-using-WPF-RS232-and-PIC-Commu
 using System.IO.Ports;
 using System.Windows.Threading;
 
@@ -65,9 +63,11 @@ namespace WPC_Interface
 
             Commdata.Document = mcFlowDoc;
             serial.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(Recieve);
+
+            // MessageBox.Show("Ready"); // For debugging
         }
 
-        #region Recieving Serial Data
+        #region Recieving Serial Data // [0]
 
         private delegate void UpdateUiTextDelegate(string text);
         private void Recieve(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
@@ -88,9 +88,65 @@ namespace WPC_Interface
             comm_good_label.Content = "G: " + comm_good.ToString();
             comm_rate_label.Content = "R: " + (100 * comm_bad / comm_total).ToString() + " %";
 
-            // Assign the value of the recieved_data to the RichTextBox.
-            para.Inlines.Add(text);
-            mcFlowDoc.Blocks.Add(para);
+            if (raw_en.IsChecked.Value)
+            {
+                // Assign the value of the recieved_data to the RichTextBox.
+                para.Inlines.Add(text);
+                mcFlowDoc.Blocks.Add(para);
+            }
+                
+        }
+
+        #endregion
+
+        #region Sending Serial Data // [0]
+
+        public void SerialSend()
+        {
+            try
+            {
+                if (SerialCmdSend(Send_box.Text, serial))
+                {
+                    BrushConverter bc = new BrushConverter();
+                    Brush brush = (Brush)bc.ConvertFrom("#FFDDDDDD");
+                    brush.Freeze();
+                    Send_btn.Background = brush;
+
+                    if (clear_send_chk.IsChecked.Value) Send_box.Text = "";
+                }
+                else
+                {
+                    BrushConverter bc = new BrushConverter();
+                    Brush brush = (Brush)bc.ConvertFrom("#FFFF6E6E");
+                    brush.Freeze();
+                    Send_btn.Background = brush;
+                }
+            }
+            catch (Exception ex)
+            {
+                para.Inlines.Add("Failed to SEND" + Send_box.Text + "\n" + ex + "\n");
+                mcFlowDoc.Blocks.Add(para);
+                Commdata.Document = mcFlowDoc;
+            }
+        }
+
+        public static bool SerialCmdSend(string data, SerialPort serial_port)
+        {
+            if (serial_port.IsOpen)
+            {
+                // Send the binary data out the port
+                byte[] hexstring = Encoding.ASCII.GetBytes(data);
+                foreach (byte hexval in hexstring)
+                {
+                    byte[] _hexval = new byte[] { hexval }; // need to convert byte to byte[] to write
+                    serial_port.Write(_hexval, 0, 1);
+                }
+            }
+            else
+            {
+                return false;
+            }
+            return true;
         }
 
         #endregion
@@ -127,16 +183,17 @@ namespace WPC_Interface
             con_status_label.Content = "Connected";
         }
 
-        private void CloseCommandBinding_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+        private void CloseCommandBinding_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e) // [2]
         {
-            // Where:   https://stackoverflow.com/a/63027984/2883691
-            // By:      dotNET
-            // Posted:  answered Jul 22 '20 at 6:11
-            // Edited:  
-            // Read:    2021-02-10
-
-            //if (MessageBox.Show("Close?", "Close", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 this.Close();
+        }
+
+        private void TextBox_KeyEnterUpdate(object sender, KeyEventArgs e) // [1]
+        {
+            if (e.Key == Key.Enter)
+            {
+                SerialSend();
+            }
         }
 
         private void clr_btn_Click(object sender, RoutedEventArgs e)
@@ -164,6 +221,34 @@ namespace WPC_Interface
             if (auto_scroll_raw.IsChecked.Value) Commdata.ScrollToEnd();
         }
 
+        private void Send_btn_Click(object sender, RoutedEventArgs e)
+        {
+            SerialSend();
+        }
+
         #endregion
     }
 }
+
+// Bibliography
+
+// [0]
+// Where:   https://www.codeproject.com/Articles/130109/Serial-Communication-using-WPF-RS232-and-PIC-Commu
+// By:      C_Johnson
+// Posted:  24 Nov 2010
+// Edited:  
+// Read:    2021-02-10
+
+// [1]
+// Where:   https://stackoverflow.com/a/13289118/2883691
+// By:      Ben
+// Posted:  answered Nov 8 '12 at 12:26
+// Edited:  edited Nov 8 '12 at 12:33
+// Read:    2021-02-13
+
+// [2]
+// Where:   https://stackoverflow.com/a/63027984/2883691
+// By:      dotNET
+// Posted:  answered Jul 22 '20 at 6:11
+// Edited:  
+// Read:    2021-02-10
