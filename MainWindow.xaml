@@ -28,11 +28,7 @@
                     <Button x:Name="con_btn" Content="Connect" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="10,173,0,0" Click="con_btn_Click" Height="20"/>
                     <Label Content="COM Port:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,36,0,0" Width="76" Height="26"/>
                     <Label Content="Baud Rate:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="9,63,0,0" Width="76" Height="26"/>
-                    <ComboBox x:Name="COM_box" HorizontalAlignment="Left" VerticalAlignment="Top" Width="91" Margin="91,38,0,0" SelectedValuePath="Content">
-                        <ComboBoxItem Content="COM1" IsSelected="True"/>
-                        <ComboBoxItem Content="COM2"/>
-                        <ComboBoxItem Content="COM7" IsSelected="True"/>
-                    </ComboBox>
+                    <ComboBox x:Name="COM_box" HorizontalAlignment="Left" VerticalAlignment="Top" Width="91" Margin="91,38,0,0"/>
                     <ComboBox x:Name="Baud_box" HorizontalAlignment="Left" VerticalAlignment="Top" Width="91" Margin="91,65,0,0" SelectedValuePath="Content">
                         <ComboBoxItem Content="1200"/>
                         <ComboBoxItem Content="2400"/>

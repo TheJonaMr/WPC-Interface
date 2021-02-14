@@ -38,6 +38,8 @@ namespace WPC_Interface
         Paragraph para = new Paragraph();
 
         // SERIAL PORT
+        DispatcherTimer timer = new DispatcherTimer();
+
         SerialPort serial = new SerialPort();
         string recieved_data;
 
@@ -52,6 +54,7 @@ namespace WPC_Interface
             InitializeComponent();
 
             LiveChartSetup();
+            DispatcherTimerSetup();
 
             #region handles
             //this.PreviewKeyDown += new KeyEventHandler(HandleEsc);
@@ -78,6 +81,102 @@ namespace WPC_Interface
         public SeriesCollection SeriesCollection { get; set; }
         public string[] Labels { get; set; }
         public Func<double, string> YFormatter { get; set; }
+
+        #region serial_methods
+
+        private void close_serial_port()
+        {
+            if (serial.IsOpen)
+            {
+                serial.Close();
+                MessageBox.Show("Was open"); // For debugging
+            }
+
+            BrushConverter bc = new BrushConverter();
+            Brush brush = (Brush)bc.ConvertFrom("#FFFFC8C8");
+            brush.Freeze();
+            con_status_label.Background = brush;
+
+            con_btn.IsEnabled = true;
+            dcon_btn.IsEnabled = false;
+            con_status_label.Content = "Not connected";
+
+            // MessageBox.Show("Closed"); // For debugging
+        }
+
+        public void DispatcherTimerSetup()
+        {
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += timer_Tick;
+            timer.Start();
+        }
+
+        void timer_Tick(object sender, EventArgs e)
+        {
+            // para.Inlines.Add("\r\nTick..\r\n");
+
+            int no_combo_items = COM_box.Items.Count;
+
+            string[] ComboBoxItem_Content_array = new string[no_combo_items];
+            string[] Coms_array = System.IO.Ports.SerialPort.GetPortNames();
+
+            // List of all com ports in combobox
+            int counter = 0;
+            foreach (ComboBoxItem port in COM_box.Items)
+                ComboBoxItem_Content_array[counter++] = port.Content.ToString();
+
+            // No change - All ports already in combobox
+            if (ComboBoxItem_Content_array.SequenceEqual(Coms_array))
+                return;
+
+            // New port - Add elements to combobox
+            if (Coms_array.Except(ComboBoxItem_Content_array).Any())
+            {
+                foreach (string cont in Coms_array.Except(ComboBoxItem_Content_array))
+                    COM_box.Items.Add(new ComboBoxItem { Content = cont });
+
+                COM_box.SelectedIndex = 0; // Select a com port
+            }
+
+            // Disconnected port - Remove elements from combobox
+            if (ComboBoxItem_Content_array.Except(Coms_array).Any())
+            {
+                bool[] combo_index = new bool[no_combo_items];
+
+                foreach (string disc_port in ComboBoxItem_Content_array.Except(Coms_array))
+                {
+                    for (int i = 0; i < no_combo_items; i++)
+                    {
+                        ComboBoxItem cur_port = (ComboBoxItem) COM_box.Items[i];
+                        // Checks if any port is selected
+                        if (COM_box.SelectedValue != null)
+                        {
+                            ComboBoxItem sel_port = (ComboBoxItem)COM_box.SelectedValue;
+                            // Checks if the selected port have been disconnected
+                            if (disc_port == sel_port.Content.ToString())
+                                close_serial_port(); // Make sure the application is set to disconnected state
+                        }
+
+                        if (cur_port.Content.ToString() == disc_port)
+                        {
+                            combo_index[i] = true;  // Remove the port at current index
+                            break;  // Consider the next port that was disconnected
+                        }
+                            
+                    }
+                }
+
+                // Remove the ports that have been disconnected
+                for (int i = 0; i < no_combo_items; i++)
+                    if (combo_index[i]) COM_box.Items.RemoveAt(i);
+
+                COM_box.SelectedIndex = 0; // Select a com port
+            }
+
+            // mcFlowDoc.Blocks.Add(para);
+        }
+
+        #endregion
 
         #region Recieving Serial Data // [0]
 
@@ -169,37 +268,48 @@ namespace WPC_Interface
 
         private void con_btn_Click(object sender, RoutedEventArgs e)
         {
-            serial.PortName = COM_box.SelectedValue.ToString();
-            serial.BaudRate = Convert.ToInt32(Baud_box.SelectedValue.ToString());
-            serial.DataBits = Convert.ToInt32(Data_box.SelectedValue.ToString());
+            if (COM_box.SelectedValue != null)
+            {
+                ComboBoxItem sel_port = (ComboBoxItem)COM_box.SelectedValue;
 
-            if (Stop_box.SelectedValue.ToString() == "1") serial.StopBits = StopBits.One;
-            else if (Stop_box.SelectedValue.ToString() == "1.5") serial.StopBits = StopBits.OnePointFive;
-            else if (Stop_box.SelectedValue.ToString() == "2") serial.StopBits = StopBits.Two;
+                serial.PortName = sel_port.Content.ToString();
+                serial.BaudRate = Convert.ToInt32(Baud_box.SelectedValue.ToString());
+                serial.DataBits = Convert.ToInt32(Data_box.SelectedValue.ToString());
 
-            if (Parity_box_N.IsSelected) serial.Parity = Parity.None;
-            else if (Parity_box_E.IsSelected) serial.Parity = Parity.Even;
-            else if (Parity_box_O.IsSelected) serial.Parity = Parity.Odd;
+                if (Stop_box.SelectedValue.ToString() == "1") serial.StopBits = StopBits.One;
+                else if (Stop_box.SelectedValue.ToString() == "1.5") serial.StopBits = StopBits.OnePointFive;
+                else if (Stop_box.SelectedValue.ToString() == "2") serial.StopBits = StopBits.Two;
 
-            serial.Handshake = System.IO.Ports.Handshake.None;
-            serial.ReadTimeout = 200;
-            serial.WriteTimeout = 50;
+                if (Parity_box_N.IsSelected) serial.Parity = Parity.None;
+                else if (Parity_box_E.IsSelected) serial.Parity = Parity.Even;
+                else if (Parity_box_O.IsSelected) serial.Parity = Parity.Odd;
 
-            serial.Open();
+                serial.Handshake = System.IO.Ports.Handshake.None;
+                serial.ReadTimeout = 200;
+                serial.WriteTimeout = 50;
 
-            BrushConverter bc = new BrushConverter();
-            Brush brush = (Brush)bc.ConvertFrom("#FFD7FF92");
-            brush.Freeze();
-            con_status_label.Background = brush;
+                serial.Open();
 
-            con_btn.IsEnabled = false;
-            dcon_btn.IsEnabled = true;
-            con_status_label.Content = "Connected";
+                BrushConverter bc = new BrushConverter();
+                Brush brush = (Brush)bc.ConvertFrom("#FFD7FF92");
+                brush.Freeze();
+                con_status_label.Background = brush;
+
+                con_btn.IsEnabled = false;
+                dcon_btn.IsEnabled = true;
+                con_status_label.Content = "Connected";
+            }
+            else
+            {
+                // Gjør knappen rød
+            }
+            
         }
 
         private void CloseCommandBinding_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e) // [2]
         {
-                this.Close();
+            close_serial_port();
+            this.Close();
         }
 
         private void TextBox_KeyEnterUpdate(object sender, KeyEventArgs e) // [1]
@@ -218,16 +328,7 @@ namespace WPC_Interface
 
         private void dcon_btn_Click(object sender, RoutedEventArgs e)
         {
-            serial.Close();
-
-            BrushConverter bc = new BrushConverter();
-            Brush brush = (Brush)bc.ConvertFrom("#FFFFC8C8");
-            brush.Freeze();
-            con_status_label.Background = brush;
-
-            con_btn.IsEnabled = true;
-            dcon_btn.IsEnabled = false;
-            con_status_label.Content = "Not connected";
+            close_serial_port();
         }
 
         private void Commdata_TextChanged(object sender, TextChangedEventArgs e)
