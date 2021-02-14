@@ -17,7 +17,13 @@ using System.Windows.Threading;
 
 // Plotting
 // https://github.com/oxyplot
+// using OxyPlot;
+// using OxyPlot.Series;
+
 // https://github.com/Live-Charts/Live-Charts
+// using System.Windows.Media;
+using LiveCharts;
+using LiveCharts.Wpf;
 
 namespace WPC_Interface
 {
@@ -45,6 +51,8 @@ namespace WPC_Interface
         {
             InitializeComponent();
 
+            LiveChartSetup();
+
             #region handles
             //this.PreviewKeyDown += new KeyEventHandler(HandleEsc);
 
@@ -67,6 +75,10 @@ namespace WPC_Interface
             // MessageBox.Show("Ready"); // For debugging
         }
 
+        public SeriesCollection SeriesCollection { get; set; }
+        public string[] Labels { get; set; }
+        public Func<double, string> YFormatter { get; set; }
+
         #region Recieving Serial Data // [0]
 
         private delegate void UpdateUiTextDelegate(string text);
@@ -74,9 +86,9 @@ namespace WPC_Interface
         {
             // Collecting the characters received to our 'buffer' (string).
             recieved_data = serial.ReadExisting();
-            
-            Dispatcher.Invoke(DispatcherPriority.Send,
-            new UpdateUiTextDelegate(WriteData), recieved_data);
+            // MainViewModel.Add_point();
+            Dispatcher.Invoke(DispatcherPriority.Send, new UpdateUiTextDelegate(WriteData), recieved_data);
+            // Dispatcher.Invoke(DispatcherPriority.Send, new UpdateUiTextDelegate(MainViewModel.Add_point), recieved_data);
         }
 
         private void WriteData(string text)
@@ -87,6 +99,8 @@ namespace WPC_Interface
             comm_total_label.Content = "T: " + comm_total.ToString();
             comm_good_label.Content = "G: " + comm_good.ToString();
             comm_rate_label.Content = "R: " + (100 * comm_bad / comm_total).ToString() + " %";
+
+            SeriesCollection[2].Values.Add(Convert.ToDouble(comm_total));
 
             if (raw_en.IsChecked.Value)
             {
@@ -224,6 +238,64 @@ namespace WPC_Interface
         private void Send_btn_Click(object sender, RoutedEventArgs e)
         {
             SerialSend();
+        }
+
+        #endregion
+
+        private void create_log_btn_Click(object sender, RoutedEventArgs e)
+        {
+            //MainViewModel.Add_point();
+        }
+
+        #region Oxyplot
+        /*
+        public MainViewModel()
+        {
+            this.MyModel = new PlotModel { Title = "Example 1" };
+            this.MyModel.Series.Add(new FunctionSeries(Math.Cos, 0, 10, 0.1, "cos(x)"));
+        }
+
+        public PlotModel MyModel { get; private set; }
+        */
+        #endregion
+        
+        #region LiveChart
+
+        private void LiveChartSetup()
+        {
+            
+
+            SeriesCollection = new SeriesCollection
+            {
+                new LineSeries
+                {
+                    Title = "Series 1",     // Optional
+                    PointGeometry = null,   // Optional
+                    PointGeometrySize = 15, // Optional
+                    Values = new ChartValues<double> { 3, 5, 7, 4 }
+                },
+                new ColumnSeries
+                {
+                    Title = "Series 2",
+                    Values = new ChartValues<decimal> { 5, 6, 2, 7 }
+                }
+            };
+
+            Labels = new[] { "Jan", "Feb", "Mar", "Apr", "May" };
+            YFormatter = value => value.ToString("C");
+
+            //modifying the series collection will animate and update the chart
+            SeriesCollection.Add(new LineSeries
+            {
+                Values = new ChartValues<double> { 5, 3, 2, 4 },
+                LineSmoothness = 0 //straight lines, 1 really smooth lines
+            });
+
+            //modifying any series values will also animate and update the chart
+            SeriesCollection[2].Values.Add(5d);
+
+            DataContext = this;
+
         }
 
         #endregion

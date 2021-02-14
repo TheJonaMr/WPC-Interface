@@ -1,15 +1,12 @@
 ﻿<Window x:Class="WPC_Interface.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:local="clr-namespace:WPC_Interface"
         mc:Ignorable="d"
         Title="WPC Interface" Height="510" Width="1100">
-    <Window.DataContext>
-        <local:MainViewModel/>
-    </Window.DataContext>
 
     <Window.InputBindings>
         <KeyBinding Command="ApplicationCommands.Close" Key="Esc" />
@@ -50,7 +47,7 @@
                     <Label Content="Logging configuration" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="232,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
                     <CheckBox x:Name="new_logfile_chk" Content="New logfile" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="312,72,0,0"/>
                     <Label x:Name="logfile_label1" Content="No file chosen" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="312,41,0,0" Width="172" Height="26"/>
-                    <Button x:Name="create_log_btn" Content="Create logfile" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="232,69,0,0" Height="20"/>
+                    <Button x:Name="create_log_btn" Content="Create logfile" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="232,69,0,0" Height="20" Click="create_log_btn_Click"/>
                     <Label Content="Something else" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="459,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
                     <Label Content="Data Bit:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,90,0,0" Width="76" Height="26"/>
                     <ComboBox x:Name="Data_box" HorizontalAlignment="Left" VerticalAlignment="Top" Width="91" Margin="91,92,0,0" SelectedValuePath="Content">
@@ -122,11 +119,11 @@
             </TabItem>
             <TabItem Header="Plot">
                 <Grid Background="#FFE5E5E5">
-                    <oxy:PlotView Model="{Binding MyModel}" Margin="10"/>
+                    <lvc:CartesianChart Series="{Binding SeriesCollection}" Margin="20" DisableAnimations="True" />
                 </Grid>
             </TabItem>
         </TabControl>
-        <Label x:Name="label1_Copy" Content="Raw serial data" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="652,35,0,0" Width="191" HorizontalContentAlignment="Center"/>
+        <Label x:Name="label1_Copy" Content="Raw serial data" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="652,35,0,0" Width="430" HorizontalContentAlignment="Center" Background="#FFF0F0F0"/>
         <ToolBar Height="30" VerticalAlignment="Top" Header="">
             <ListBoxItem Content="test"/>
         </ToolBar>
