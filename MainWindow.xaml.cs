@@ -244,7 +244,7 @@ namespace WPC_Interface
                 }
 
                 // Remove the ports that have been disconnected
-                for (int i = 0; i < Combobox_Count; i++)
+                for (int i = Combobox_Count - 1; i >= 0; i--)
                     if (combo_index[i]) COM_box.Items.RemoveAt(i);
 
                 COM_box.SelectedIndex = 0; // Select a com port
@@ -487,7 +487,12 @@ namespace WPC_Interface
 
         private void ReadFilterSettings(object sender, EventArgs e)
         {
-            filterSettings = File.ReadAllLines("FilterSettings.txt");
+            string filename = "FilterSettings.txt";
+            if (File.Exists(filename))
+            {
+                filterSettings = File.ReadAllLines(filename);
+            }
+            
         }
     }
 }

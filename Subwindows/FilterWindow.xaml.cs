@@ -81,10 +81,14 @@ namespace WPC_Interface.Subwindows
 
         private void ReadFilterSettings()
         {
-            filterSettings = File.ReadAllLines("FilterSettings.txt");
-            COM_f.Text = filterSettings[0];
-            DESC_f.Text = filterSettings[1];
-            MAN_f.Text = filterSettings[2];
+            string filename = "FilterSettings.txt";
+            if (File.Exists(filename))
+            {
+                filterSettings = File.ReadAllLines(filename);
+                COM_f.Text = filterSettings[0];
+                DESC_f.Text = filterSettings[1];
+                MAN_f.Text = filterSettings[2];
+            }
         }
 
         private void Help_Click(object sender, RoutedEventArgs e)
