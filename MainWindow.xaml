@@ -43,7 +43,7 @@
                     <Label Content="Logging configuration" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="232,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
                     <CheckBox x:Name="new_logfile_chk" Content="New logfile" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="312,72,0,0"/>
                     <Label x:Name="logfile_label1" Content="No file chosen" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="312,41,0,0" Width="172" Height="26"/>
-                    <Button x:Name="create_log_btn" Content="Create logfile" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="232,69,0,0" Height="20" Click="create_log_btn_Click"/>
+                    <Button x:Name="create_log_btn" Content="Create logfile" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="232,69,0,0" Height="20"/>
                     <Label Content="Something else" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="459,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
                     <Label Content="Data Bit:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,90,0,0" Width="76" Height="26"/>
                     <ComboBox x:Name="Data_box" HorizontalAlignment="Left" VerticalAlignment="Top" Width="91" Margin="91,92,0,0" SelectedValuePath="Content">

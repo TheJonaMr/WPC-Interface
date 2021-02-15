@@ -74,8 +74,6 @@ namespace WPC_Interface
 
             Commdata.Document = mcFlowDoc;
             serial.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(Recieve);
-
-            // MessageBox.Show("Ready"); // For debugging
         }
 
         public SeriesCollection SeriesCollection { get; set; }
@@ -87,10 +85,7 @@ namespace WPC_Interface
         private void close_serial_port()
         {
             if (serial.IsOpen)
-            {
                 serial.Close();
-                MessageBox.Show("Was open"); // For debugging
-            }
 
             BrushConverter bc = new BrushConverter();
             Brush brush = (Brush)bc.ConvertFrom("#FFFFC8C8");
@@ -100,8 +95,6 @@ namespace WPC_Interface
             con_btn.IsEnabled = true;
             dcon_btn.IsEnabled = false;
             con_status_label.Content = "Not connected";
-
-            // MessageBox.Show("Closed"); // For debugging
         }
 
         public void DispatcherTimerSetup()
@@ -385,6 +378,8 @@ namespace WPC_Interface
 
         private void CloseCommandBinding_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e) // [2]
         {
+            // Uncomment line below to get a message box asking if you really want to close the window.
+            // if (MessageBox.Show("Close?", "Close", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             close_serial_port();
             this.Close();
         }
@@ -419,11 +414,6 @@ namespace WPC_Interface
         }
 
         #endregion
-
-        private void create_log_btn_Click(object sender, RoutedEventArgs e)
-        {
-            //MainViewModel.Add_point();
-        }
 
         #region Oxyplot
         /*
