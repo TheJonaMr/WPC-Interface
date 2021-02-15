@@ -15,13 +15,10 @@ using System.Windows.Shapes;
 using System.IO.Ports;
 using System.Windows.Threading;
 
-// Plotting
-// https://github.com/oxyplot
-// using OxyPlot;
-// using OxyPlot.Series;
+using System.Management;    // Also add reference to system.Management (by default it is not available)
 
-// https://github.com/Live-Charts/Live-Charts
-// using System.Windows.Media;
+using System.IO;            // Used for file access
+
 using LiveCharts;
 using LiveCharts.Wpf;
 
@@ -47,6 +44,8 @@ namespace WPC_Interface
         private int comm_good = 0;
         private int comm_bad = 0;
 
+        private string[] filterSettings = new string[] { "", "", "" };
+
         #endregion
 
         public MainWindow()
@@ -55,6 +54,7 @@ namespace WPC_Interface
 
             LiveChartSetup();
             DispatcherTimerSetup();
+            ReadFilterSettings(null, null);
 
             #region handles
             //this.PreviewKeyDown += new KeyEventHandler(HandleEsc);
@@ -113,39 +113,116 @@ namespace WPC_Interface
 
         void timer_Tick(object sender, EventArgs e)
         {
-            // para.Inlines.Add("\r\nTick..\r\n");
+            // para.Inlines.Add("\r\nTick..\r\n\r\n");
 
-            int no_combo_items = COM_box.Items.Count;
+            int counter = 0;
+            int Combobox_Count = COM_box.Items.Count;
 
-            string[] ComboBoxItem_Content_array = new string[no_combo_items];
-            string[] Coms_array = System.IO.Ports.SerialPort.GetPortNames();
+            string[] ComboBoxItem_portnames = new string[Combobox_Count];
+
+            string[] init_portnames = System.IO.Ports.SerialPort.GetPortNames();
+            int PORT_Count = init_portnames.Count();
+            string[] desc = new string[PORT_Count];
+            string[] man = new string[PORT_Count];
+            bool[] not_keep = new bool[PORT_Count];
+            int keep_count = PORT_Count;
+
+            // Identify all COM ports, and retrieve information about them
+            using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE Caption like '%(COM%'"))
+            {
+                var port_description = searcher.Get().Cast<ManagementBaseObject>().ToList().Select(p => p["Caption"].ToString());
+                var Manufacturer = searcher.Get().Cast<ManagementBaseObject>().ToList().Select(p => p["Manufacturer"].ToString());
+
+                // Put retreived info into string arrays
+                counter = 0;
+                foreach (string s in port_description)
+                {
+                    desc[counter] = s;
+                    counter++;
+                }
+
+                // Put retreived info into string arrays
+                counter = 0;
+                foreach (string s in Manufacturer)
+                {
+                    man[counter] = s;
+                    counter++;
+                }
+            }
+
+            // Filter out the undesired COM ports
+            for (int i = 0; i < PORT_Count; i++)
+            {
+                if (filterSettings[0] != "")  // Check if filter settings for COM are made
+                {
+                    if (!init_portnames[i].Contains(filterSettings[0]))  // Check if COM does not matches filter settings
+                    {
+                        not_keep[i] = true;
+                        keep_count--;
+                        continue;
+                    }
+                }
+
+                if (filterSettings[1] != "")  // Check if filter settings for DESC are made
+                {
+                    if (!desc[i].Contains(filterSettings[1]))  // Check if DESC does not matches filter settings
+                    {
+                        not_keep[i] = true;
+                        keep_count--;
+                        continue;
+                    }
+                }
+
+                if (filterSettings[2] != "")  // Check if filter settings for MAN are made
+                {
+                    if (!man[i].Contains(filterSettings[2]))  // Check if MAN does not matches filter settings
+                    {
+                        not_keep[i] = true;
+                        keep_count--;
+                        continue;
+                    }
+                }
+            }
+
+            // Make a list of the ports that are to be kept
+            string[] portnames = new string[keep_count];
+
+            counter = 0;
+            for (int i = 0; i < PORT_Count; i++)
+            {
+                if (!not_keep[i])
+                {
+                    portnames[counter] = init_portnames[i];
+                    counter++;
+                }
+            }
 
             // List of all com ports in combobox
-            int counter = 0;
+            counter = 0;
             foreach (ComboBoxItem port in COM_box.Items)
-                ComboBoxItem_Content_array[counter++] = port.Content.ToString();
+                ComboBoxItem_portnames[counter++] = port.Content.ToString();
 
             // No change - All ports already in combobox
-            if (ComboBoxItem_Content_array.SequenceEqual(Coms_array))
+            if (ComboBoxItem_portnames.SequenceEqual(portnames))
                 return;
 
             // New port - Add elements to combobox
-            if (Coms_array.Except(ComboBoxItem_Content_array).Any())
+            if (portnames.Except(ComboBoxItem_portnames).Any())
             {
-                foreach (string cont in Coms_array.Except(ComboBoxItem_Content_array))
+                foreach (string cont in portnames.Except(ComboBoxItem_portnames))
                     COM_box.Items.Add(new ComboBoxItem { Content = cont });
 
                 COM_box.SelectedIndex = 0; // Select a com port
             }
 
             // Disconnected port - Remove elements from combobox
-            if (ComboBoxItem_Content_array.Except(Coms_array).Any())
+            if (ComboBoxItem_portnames.Except(portnames).Any())
             {
-                bool[] combo_index = new bool[no_combo_items];
+                bool[] combo_index = new bool[Combobox_Count];
 
-                foreach (string disc_port in ComboBoxItem_Content_array.Except(Coms_array))
+                foreach (string disc_port in ComboBoxItem_portnames.Except(portnames))
                 {
-                    for (int i = 0; i < no_combo_items; i++)
+                    for (int i = 0; i < Combobox_Count; i++)
                     {
                         ComboBoxItem cur_port = (ComboBoxItem) COM_box.Items[i];
                         // Checks if any port is selected
@@ -167,7 +244,7 @@ namespace WPC_Interface
                 }
 
                 // Remove the ports that have been disconnected
-                for (int i = 0; i < no_combo_items; i++)
+                for (int i = 0; i < Combobox_Count; i++)
                     if (combo_index[i]) COM_box.Items.RemoveAt(i);
 
                 COM_box.SelectedIndex = 0; // Select a com port
@@ -400,6 +477,18 @@ namespace WPC_Interface
         }
 
         #endregion
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Subwindows.FilterWindow FilterWindow = new Subwindows.FilterWindow();
+            FilterWindow.Closed += new EventHandler(ReadFilterSettings);
+            FilterWindow.Show();
+        }
+
+        private void ReadFilterSettings(object sender, EventArgs e)
+        {
+            filterSettings = File.ReadAllLines("FilterSettings.txt");
+        }
     }
 }
 

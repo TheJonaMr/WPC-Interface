@@ -17,7 +17,7 @@
     </Window.CommandBindings>
 
     <Grid>
-        <RichTextBox x:Name="Commdata" Margin="652,61,0,0" IsReadOnly="True" HorizontalAlignment="Left" Width="430" VerticalScrollBarVisibility="Auto" Height="292" VerticalAlignment="Top">
+        <RichTextBox x:Name="Commdata" Margin="652,61,10,0" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Height="292" VerticalAlignment="Top">
             <FlowDocument/>
         </RichTextBox>
         <TabControl HorizontalAlignment="Left" Height="402" VerticalAlignment="Top" Width="647" Margin="0,35,0,0">
@@ -121,7 +121,7 @@
         </TabControl>
         <Label x:Name="label1_Copy" Content="Raw serial data" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="652,35,0,0" Width="430" HorizontalContentAlignment="Center" Background="#FFF0F0F0"/>
         <ToolBar Height="30" VerticalAlignment="Top" Header="">
-            <ListBoxItem Content="test"/>
+            <Button Content="Serial Port Selection" Click="Button_Click"/>
         </ToolBar>
         <Label x:Name="logfile_label2" Content="Selected logfile: No logfile active/chosen" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,443,0,0" Width="1072" Height="26" Background="#FFF0F0F0"/>
         <Label x:Name="con_status_label" Content="Not connected" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="993,411,0,0" Width="89" Height="26" Background="#FFFFC8C8" HorizontalContentAlignment="Center"/>
