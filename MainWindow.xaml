@@ -6,7 +6,7 @@
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:local="clr-namespace:WPC_Interface"
         mc:Ignorable="d"
-        Title="WPC Interface" Height="510" Width="1100">
+        Title="WPC Interface" Height="510" Width="1100" MinWidth="1100" MinHeight="470">
 
     <Window.InputBindings>
         <KeyBinding Command="ApplicationCommands.Close" Key="Esc" />
@@ -17,12 +17,21 @@
     </Window.CommandBindings>
 
     <Grid>
-        <RichTextBox x:Name="Commdata" Margin="652,61,10,0" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Height="292" VerticalAlignment="Top">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="355*"/>
+            <RowDefinition Height="90*" MaxHeight="90"/>
+            <RowDefinition Height="35*" MaxHeight="35"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="31*"/>
+            <ColumnDefinition Width="21*"/>
+        </Grid.ColumnDefinitions>
+        <RichTextBox x:Name="Commdata" Margin="4,61,10,2" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Grid.Column="1">
             <FlowDocument/>
         </RichTextBox>
-        <TabControl HorizontalAlignment="Left" Height="402" VerticalAlignment="Top" Width="647" Margin="0,35,0,0">
+        <TabControl Margin="0,35,4,7" Grid.RowSpan="2">
             <TabItem Header="Configuration">
-                <Grid Background="#FFE5E5E5" Height="385" VerticalAlignment="Top">
+                <Grid Background="#FFE5E5E5" Margin="0,0,0,-11">
                     <Label Content="Serial settings" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
                     <Button x:Name="sel_log_btn" Content="Select logfile" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="232,44,0,0" Height="20"/>
                     <Button x:Name="con_btn" Content="Connect" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="10,173,0,0" Click="con_btn_Click" Height="20"/>
@@ -78,7 +87,7 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Controls">
-                <Grid Background="#FFE5E5E5" Height="385" VerticalAlignment="Top">
+                <Grid Background="#FFE5E5E5" Margin="0,0,0,-11">
                     <Label Content="Sensors" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
                     <Label Content="Transistors" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="232,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
                     <Label Content="Communication" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="459,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
@@ -119,25 +128,25 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Label x:Name="label1_Copy" Content="Raw serial data" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="652,35,0,0" Width="430" HorizontalContentAlignment="Center" Background="#FFF0F0F0"/>
-        <ToolBar Height="30" VerticalAlignment="Top" Header="">
+        <Label x:Name="label1_Copy" Content="Raw serial data" VerticalAlignment="Top" Margin="4,35,7,0" HorizontalContentAlignment="Center" Background="#FFF0F0F0" Grid.Column="1" Height="26"/>
+        <ToolBar Height="30" VerticalAlignment="Top" Header="" Grid.ColumnSpan="2">
             <Button Content="Serial Port Selection" Click="Button_Click"/>
         </ToolBar>
-        <Label x:Name="logfile_label2" Content="Selected logfile: No logfile active/chosen" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,443,0,0" Width="1072" Height="26" Background="#FFF0F0F0"/>
-        <Label x:Name="con_status_label" Content="Not connected" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="993,411,0,0" Width="89" Height="26" Background="#FFFFC8C8" HorizontalContentAlignment="Center"/>
-        <Label x:Name="comm_rate_label" Content="R: 0%" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="922,411,0,0" Width="71" Height="26" Background="#FFF0F0F0"/>
-        <Label x:Name="comm_bad_label" Content="B: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="832,411,0,0" Width="90" Height="26" Background="#FFF0F0F0"/>
-        <Label x:Name="comm_good_label" Content="G: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="742,411,0,0" Width="90" Height="26" RenderTransformOrigin="0.441,0.513" Background="#FFF0F0F0"/>
-        <Label x:Name="comm_total_label" Content="T: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="652,411,0,0" Width="90" Height="26" Background="#FFF0F0F0"/>
-        <Button x:Name="clr_btn" Content="Clear" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="1007,358,0,0" Click="clr_btn_Click"/>
-        <CheckBox x:Name="raw_en" Content="Print raw data" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="820,361,0,0" IsChecked="True"/>
-        <CheckBox x:Name="auto_scroll_raw" Content="Autoscroll" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="652,361,0,0" IsChecked="True"/>
-        <TextBox x:Name="Send_box" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="247" Margin="727,383,0,0" VerticalContentAlignment="Center" KeyUp="TextBox_KeyEnterUpdate">
+        <Label x:Name="logfile_label2" VerticalAlignment="Bottom" Margin="5,0,5,5" Height="26" Background="#FFF0F0F0" Grid.ColumnSpan="2" Grid.Row="2"/>
+        <Label x:Name="con_status_label" Content="Not connected" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="345,56,0,0" Width="89" Height="26" Background="#FFFFC8C8" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="1"/>
+        <Label x:Name="comm_rate_label" Content="R: 0%" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="274,56,0,0" Width="71" Height="26" Background="#FFF0F0F0" Grid.Column="1" Grid.Row="1"/>
+        <Label x:Name="comm_bad_label" Content="B: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="184,56,0,0" Width="90" Height="26" Background="#FFF0F0F0" Grid.Column="1" Grid.Row="1"/>
+        <Label x:Name="comm_good_label" Content="G: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="94,56,0,0" Width="90" Height="26" RenderTransformOrigin="0.441,0.513" Background="#FFF0F0F0" Grid.Column="1" Grid.Row="1"/>
+        <Label x:Name="comm_total_label" Content="T: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="4,56,0,0" Width="90" Height="26" Background="#FFF0F0F0" Grid.Column="1" Grid.Row="1"/>
+        <Button x:Name="clr_btn" Content="Clear" VerticalAlignment="Top" Margin="0,3,7,0" Click="clr_btn_Click" Grid.Column="1" Height="20" Grid.Row="1" HorizontalAlignment="Right" Width="75"/>
+        <CheckBox x:Name="raw_en" Content="Print raw data" VerticalAlignment="Top" Margin="172,6,0,0" IsChecked="True" Grid.Column="1" Height="15" Grid.Row="1" HorizontalAlignment="Left" Width="94"/>
+        <CheckBox x:Name="auto_scroll_raw" Content="Autoscroll" VerticalAlignment="Top" Margin="4,6,0,0" IsChecked="True" Grid.Column="1" Height="15" Grid.Row="1" HorizontalAlignment="Left" Width="73"/>
+        <TextBox x:Name="Send_box" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Margin="79,28,115,0" VerticalContentAlignment="Center" KeyUp="TextBox_KeyEnterUpdate" Grid.Column="1" Grid.Row="1">
             <!--<TextBox.InputBindings>
                 <KeyBinding Command="{Binding SomeCommand}" Key="Return" />
             </TextBox.InputBindings>-->
         </TextBox>
-        <Button x:Name="Send_btn" Content="Send" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Margin="652,383,0,0" Height="23" Click="Send_btn_Click"/>
-        <CheckBox x:Name="clear_send_chk" Content="Clear after send" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="979,388,0,0" IsChecked="True"/>
+        <Button x:Name="Send_btn" Content="Send" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Margin="4,28,0,0" Height="23" Click="Send_btn_Click" Grid.Column="1" Grid.Row="1"/>
+        <CheckBox x:Name="clear_send_chk" Content="Clear after send" VerticalAlignment="Top" Margin="0,33,7,0" IsChecked="True" Grid.Column="1" Height="15" Grid.Row="1" HorizontalAlignment="Right" Width="103"/>
     </Grid>
 </Window>
