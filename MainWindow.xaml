@@ -6,7 +6,7 @@
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:local="clr-namespace:WPC_Interface"
         mc:Ignorable="d"
-        Title="WPC Interface" Height="510" Width="1100" MinWidth="1100" MinHeight="470">
+        Title="WPC Interface" Height="510" Width="1100" MinWidth="660" MinHeight="320">
 
     <Window.InputBindings>
         <KeyBinding Command="ApplicationCommands.Close" Key="Esc" />
@@ -32,6 +32,7 @@
         <TabControl Margin="0,35,4,7" Grid.RowSpan="2">
             <TabItem Header="Configuration">
                 <Grid Background="#FFE5E5E5" Margin="0,0,0,-11">
+                    <GroupBox Header="Trailing symbol" HorizontalAlignment="Left" Height="82" Margin="10,200,0,0" VerticalAlignment="Top" Width="172"/>
                     <Label Content="Serial settings" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
                     <Button x:Name="sel_log_btn" Content="Select logfile" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="232,44,0,0" Height="20"/>
                     <Button x:Name="con_btn" Content="Connect" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="10,173,0,0" Click="con_btn_Click" Height="20"/>
@@ -69,13 +70,13 @@
                                     // Posted:  answered Oct 14 '11 at 2:48
                                     // Edited:  edited Oct 18 '12 at 20:14
                                     // Read:    2021-02-12                                          -->
-                            <TextBlock ><Bold>N</Bold>ONE</TextBlock>
+                            <TextBlock ><Bold><Run Text="N"/></Bold><Run Text="ONE"/></TextBlock>
                         </ComboBoxItem>
                         <ComboBoxItem x:Name="Parity_box_E">
-                            <TextBlock><Bold>E</Bold>VEN</TextBlock>
+                            <TextBlock><Bold><Run Text="E"/></Bold><Run Text="VEN"/></TextBlock>
                         </ComboBoxItem>
                         <ComboBoxItem x:Name="Parity_box_O">
-                            <TextBlock><Bold>O</Bold>DD</TextBlock>
+                            <TextBlock><Bold><Run Text="O"/></Bold><Run Text="DD"/></TextBlock>
                         </ComboBoxItem>
                     </ComboBox>
                     <Label Content="Stop Bit:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,117,0,0" Width="76" Height="26"/>
@@ -84,6 +85,17 @@
                         <ComboBoxItem Content="1.5"/>
                         <ComboBoxItem Content="2"/>
                     </ComboBox>
+                    <GroupBox Header="Send as String / Number" HorizontalAlignment="Left" Height="54" Margin="10,287,0,0" VerticalAlignment="Top" Width="172"/>
+                    <StackPanel HorizontalAlignment="Left" Height="30" Margin="22,307,0,0" VerticalAlignment="Top" Width="154">
+                        <RadioButton x:Name="as_text" Content="String/ASCII" IsChecked="True" Checked="as_text_Checked"/>
+                        <RadioButton x:Name="as_number" Content="Number (no trail)" Checked="as_number_Checked"/>
+                    </StackPanel>
+                    <StackPanel HorizontalAlignment="Left" Height="63" Margin="22,219,0,0" VerticalAlignment="Top" Width="152">
+                        <RadioButton x:Name="trail_return" Content="\r&#x9;Carriage Retrun" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="trail_return_Checked"/>
+                        <RadioButton x:Name="trail_line" Content="\n &#x9;Line Feed" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="trail_line_Checked"/>
+                        <RadioButton x:Name="trail_new" Content="\r\n &#x9;End of Line" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="trail_new_Checked"/>
+                        <RadioButton x:Name="trail_none" Content="None" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="trail_none_Checked" IsChecked="True"/>
+                    </StackPanel>
                 </Grid>
             </TabItem>
             <TabItem Header="Controls">
@@ -131,6 +143,7 @@
         <Label x:Name="label1_Copy" Content="Raw serial data" VerticalAlignment="Top" Margin="4,35,7,0" HorizontalContentAlignment="Center" Background="#FFF0F0F0" Grid.Column="1" Height="26"/>
         <ToolBar Height="30" VerticalAlignment="Top" Header="" Grid.ColumnSpan="2">
             <Button Content="Serial Port Selection" Click="Button_Click"/>
+            <Button Content="Default size" Margin="0,1.5" Click="Button_Click_1"/>
         </ToolBar>
         <Label x:Name="logfile_label2" VerticalAlignment="Bottom" Margin="5,0,5,5" Height="26" Background="#FFF0F0F0" Grid.ColumnSpan="2" Grid.Row="2"/>
         <Label x:Name="con_status_label" Content="Not connected" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="345,56,0,0" Width="89" Height="26" Background="#FFFFC8C8" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="1"/>
@@ -139,7 +152,7 @@
         <Label x:Name="comm_good_label" Content="G: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="94,56,0,0" Width="90" Height="26" RenderTransformOrigin="0.441,0.513" Background="#FFF0F0F0" Grid.Column="1" Grid.Row="1"/>
         <Label x:Name="comm_total_label" Content="T: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="4,56,0,0" Width="90" Height="26" Background="#FFF0F0F0" Grid.Column="1" Grid.Row="1"/>
         <Button x:Name="clr_btn" Content="Clear" VerticalAlignment="Top" Margin="0,3,7,0" Click="clr_btn_Click" Grid.Column="1" Height="20" Grid.Row="1" HorizontalAlignment="Right" Width="75"/>
-        <CheckBox x:Name="raw_en" Content="Print raw data" VerticalAlignment="Top" Margin="172,6,0,0" IsChecked="True" Grid.Column="1" Height="15" Grid.Row="1" HorizontalAlignment="Left" Width="94"/>
+        <CheckBox x:Name="raw_en" Content="Print raw data" VerticalAlignment="Top" Margin="82,6,0,0" IsChecked="True" Grid.Column="1" Height="15" Grid.Row="1" HorizontalAlignment="Left" Width="94"/>
         <CheckBox x:Name="auto_scroll_raw" Content="Autoscroll" VerticalAlignment="Top" Margin="4,6,0,0" IsChecked="True" Grid.Column="1" Height="15" Grid.Row="1" HorizontalAlignment="Left" Width="73"/>
         <TextBox x:Name="Send_box" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Margin="79,28,115,0" VerticalContentAlignment="Center" KeyUp="TextBox_KeyEnterUpdate" Grid.Column="1" Grid.Row="1">
             <!--<TextBox.InputBindings>

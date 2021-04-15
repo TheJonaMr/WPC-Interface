@@ -42,6 +42,7 @@ namespace WPC_Interface.Subwindows
 
             using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE Caption like '%(COM%'")) // [1]
             {
+
                 var port_description = searcher.Get().Cast<ManagementBaseObject>().ToList().Select(p => p["Caption"].ToString());
                 var Manufacturer = searcher.Get().Cast<ManagementBaseObject>().ToList().Select(p => p["Manufacturer"].ToString());
 
@@ -52,6 +53,17 @@ namespace WPC_Interface.Subwindows
                 foreach (string s in port_description)
                 {
                     descriptions[counter] = s;
+
+                    // This fixes an issue where the order of the COM port names doesn't appear in the expected order.
+                    string[] coms = s.Split('(', ')');
+                    foreach (string sub in coms)
+                    {
+                        if (sub.Contains("COM"))
+                        {
+                            portnames[counter] = sub;
+                        }
+                    }
+
                     counter++;
                 }
 
@@ -68,7 +80,6 @@ namespace WPC_Interface.Subwindows
                     items.Add(new Ports() { COM = portnames[i], DESC = descriptions[i], MAN = manufacturers[i] });
                 }
                 lvPorts.ItemsSource = items;
-                
             }
         }
         // You need to use the Microsoft.Bcl.Async NuGet package to bring in the appropriate library support for .NET 4.

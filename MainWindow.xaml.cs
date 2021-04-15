@@ -78,6 +78,8 @@ namespace WPC_Interface
 
         public SeriesCollection SeriesCollection { get; set; }
         public string[] Labels { get; set; }
+        public string trail { get; set; }
+        public string send_as { get; set; }
         public Func<double, string> YFormatter { get; set; }
 
         #region serial_methods
@@ -131,6 +133,17 @@ namespace WPC_Interface
                 foreach (string s in port_description)
                 {
                     desc[counter] = s;
+
+                    // This fixes an issue where the order of the COM port names doesn't appear in the expected order.
+                    string[] coms = s.Split('(', ')');
+                    foreach (string sub in coms)
+                    {
+                        if (sub.Contains("COM"))
+                        {
+                            init_portnames[counter] = sub;
+                        }
+                    }
+
                     counter++;
                 }
 
@@ -143,8 +156,16 @@ namespace WPC_Interface
                 }
             }
 
+            // man might become null if the device is unplugged
+            if (man == null) {
+                para.Inlines.Add("MAN ER NULL");
+                mcFlowDoc.Blocks.Add(para);
+                return;
+            }
+
+
             // Filter out the undesired COM ports
-            for (int i = 0; i < PORT_Count; i++)
+                for (int i = 0; i < PORT_Count; i++)
             {
                 if (filterSettings[0] != "")  // Check if filter settings for COM are made
                 {
@@ -288,7 +309,16 @@ namespace WPC_Interface
         {
             try
             {
-                if (SerialCmdSend(Send_box.Text, serial))
+                if (send_as == "string" && SerialCmdSend(Send_box.Text + trail, serial, true))
+                {
+                    BrushConverter bc = new BrushConverter();
+                    Brush brush = (Brush)bc.ConvertFrom("#FFDDDDDD");
+                    brush.Freeze();
+                    Send_btn.Background = brush;
+
+                    if (clear_send_chk.IsChecked.Value) Send_box.Text = "";
+                }
+                else if (send_as == "number" && SerialCmdSend(Send_box.Text, serial, false))
                 {
                     BrushConverter bc = new BrushConverter();
                     Brush brush = (Brush)bc.ConvertFrom("#FFDDDDDD");
@@ -313,16 +343,24 @@ namespace WPC_Interface
             }
         }
 
-        public static bool SerialCmdSend(string data, SerialPort serial_port)
+        public static bool SerialCmdSend(string data, SerialPort serial_port, bool as_text)
         {
             if (serial_port.IsOpen)
             {
-                // Send the binary data out the port
-                byte[] hexstring = Encoding.ASCII.GetBytes(data);
-                foreach (byte hexval in hexstring)
-                {
-                    byte[] _hexval = new byte[] { hexval }; // need to convert byte to byte[] to write
-                    serial_port.Write(_hexval, 0, 1);
+                if (as_text) {                  // Send data as text/ASCII
+                    serial_port.Write(data);    // For sending strings
+                }
+                else {                          // Send data as a byte/number, 0 - 255
+                    try
+                    {
+                        Byte result = Byte.Parse(data);
+                        byte[] hexstring = new byte[] { result };
+                        serial_port.Write(hexstring, 0, 1);
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
                 }
             }
             else
@@ -380,8 +418,10 @@ namespace WPC_Interface
         {
             // Uncomment line below to get a message box asking if you really want to close the window.
             // if (MessageBox.Show("Close?", "Close", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-            close_serial_port();
-            this.Close();
+            // {
+                close_serial_port();
+                this.Close();
+            // }
         }
 
         private void TextBox_KeyEnterUpdate(object sender, KeyEventArgs e) // [1]
@@ -483,6 +523,42 @@ namespace WPC_Interface
                 filterSettings = File.ReadAllLines(filename);
             }
             
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            this.Width = 1100;
+            this.Height = 510;
+        }
+
+        private void trail_none_Checked(object sender, RoutedEventArgs e)
+        {
+            trail = "";
+        }
+
+        private void trail_return_Checked(object sender, RoutedEventArgs e)
+        {
+            trail = "\r";
+        }
+
+        private void trail_line_Checked(object sender, RoutedEventArgs e)
+        {
+            trail = "\r";
+        }
+
+        private void trail_new_Checked(object sender, RoutedEventArgs e)
+        {
+            trail = "\r\n";
+        }
+
+        private void as_text_Checked(object sender, RoutedEventArgs e)
+        {
+            send_as = "string";
+        }
+
+        private void as_number_Checked(object sender, RoutedEventArgs e)
+        {
+            send_as = "number";
         }
     }
 }
