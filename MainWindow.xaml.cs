@@ -79,6 +79,7 @@ namespace WPC_Interface
         public SeriesCollection SeriesCollection { get; set; }
         public string[] Labels { get; set; }
         public string trail { get; set; }
+        public string line_buffer { get; set; }
         public string send_as { get; set; }
         public Func<double, string> YFormatter { get; set; }
 
@@ -283,6 +284,18 @@ namespace WPC_Interface
 
         private void WriteData(string text)
         {
+            line_buffer += text;
+            if (line_buffer.Contains("\r\n"))
+            {
+                if (line_buffer.Contains("STATUS"))
+                {
+                    string[] string_array = line_buffer.Split(':', '\r', '\n');
+                    Byte result = Byte.Parse(string_array[1]);
+                    updateView(result);
+                }
+                line_buffer = "";
+            }
+
             comm_total += text.Length;
             comm_good += text.Length;
 
@@ -353,9 +366,9 @@ namespace WPC_Interface
                 else {                          // Send data as a byte/number, 0 - 255
                     try
                     {
-                        Byte result = Byte.Parse(data);
-                        byte[] hexstring = new byte[] { result };
-                        serial_port.Write(hexstring, 0, 1);
+                        Byte result = Byte.Parse(data);             // Convert text to a number
+                        byte[] hexstring = new byte[] { result };   // Put the number in an array
+                        serial_port.Write(hexstring, 0, 1);         // Send the first element of the array
                     }
                     catch (Exception)
                     {
@@ -406,6 +419,8 @@ namespace WPC_Interface
                 con_btn.IsEnabled = false;
                 dcon_btn.IsEnabled = true;
                 con_status_label.Content = "Connected";
+
+                SerialCmdSend("2", serial, false);  // Request status from uC
             }
             else
             {
@@ -508,7 +523,7 @@ namespace WPC_Interface
 
         #endregion
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void FilterMenu_btn_Click(object sender, RoutedEventArgs e)
         {
             Subwindows.FilterWindow FilterWindow = new Subwindows.FilterWindow();
             FilterWindow.Closed += new EventHandler(ReadFilterSettings);
@@ -525,7 +540,7 @@ namespace WPC_Interface
             
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void resize_default_btn_Click(object sender, RoutedEventArgs e)
         {
             this.Width = 1100;
             this.Height = 510;
@@ -559,6 +574,36 @@ namespace WPC_Interface
         private void as_number_Checked(object sender, RoutedEventArgs e)
         {
             send_as = "number";
+        }
+
+        private void powerCheckBox_handle(object sender, RoutedEventArgs e)
+        {
+            SerialCmdSend("1", serial, false);  // Put uC in command mode
+            SerialCmdSend("4", serial, false);  // De-/activate transfer of power
+        }
+
+        private void sensorCheckBox_handle(object sender, RoutedEventArgs e)
+        {
+            SerialCmdSend("1", serial, false);  // Put uC in command mode
+            SerialCmdSend("5", serial, false);  // De-/activate logging from PAC1710
+        }
+
+        private void PassExtDataCheckBox_handle(object sender, RoutedEventArgs e)
+        {
+            SerialCmdSend("1", serial, false);  // Put uC in command mode
+            SerialCmdSend("6", serial, false);  // Stop/start passthrough to/from USART1 to/from USART3
+        }
+
+        private void updateView(Byte value)
+        {
+            sensorCheckBox.IsChecked = Convert.ToBoolean(value & 1 << 6);
+            powerCheckBox.IsChecked = Convert.ToBoolean(value & 1 << 7);
+            PassExtDataCheckBox.IsChecked = Convert.ToBoolean(value & 1 << 5);
+        }
+
+        private void uC_status_req_btn_Click(object sender, RoutedEventArgs e)
+        {
+            if (serial.IsOpen) SerialCmdSend("2", serial, false);  // Request status from uC
         }
     }
 }

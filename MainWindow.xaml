@@ -103,9 +103,9 @@
                     <Label Content="Sensors" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
                     <Label Content="Transistors" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="232,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
                     <Label Content="Communication" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="459,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
-                    <CheckBox Content="Pass external data" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="459,204,0,0"/>
-                    <CheckBox Content="Power electronics" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="232,41,0,0"/>
-                    <CheckBox Content="Read sensors" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,41,0,0"/>
+                    <CheckBox x:Name="PassExtDataCheckBox" Content="Pass external data" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="459,204,0,0" Click="PassExtDataCheckBox_handle"/>
+                    <CheckBox x:Name="powerCheckBox" Content="Power electronics" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="232,41,0,0" Click="powerCheckBox_handle"/>
+                    <CheckBox x:Name="sensorCheckBox" Content="Read sensors" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,41,0,0" Click="sensorCheckBox_handle"/>
                     <Label Content="Baud Rate:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="459,224,0,0" Width="76" Height="26"/>
                     <ComboBox x:Name="ext_baud_box" HorizontalAlignment="Left" VerticalAlignment="Top" Width="91" Margin="540,226,0,0" SelectedValuePath="Content">
                         <ComboBoxItem Content="1200"/>
@@ -142,8 +142,9 @@
         </TabControl>
         <Label x:Name="label1_Copy" Content="Raw serial data" VerticalAlignment="Top" Margin="4,35,7,0" HorizontalContentAlignment="Center" Background="#FFF0F0F0" Grid.Column="1" Height="26"/>
         <ToolBar Height="30" VerticalAlignment="Top" Header="" Grid.ColumnSpan="2">
-            <Button Content="Serial Port Selection" Click="Button_Click"/>
-            <Button Content="Default size" Margin="0,1.5" Click="Button_Click_1"/>
+            <Button x:Name="FilterMenu_btn" Content="Serial Port Selection" Click="FilterMenu_btn_Click" Background="Gainsboro" BorderBrush="#FFB2B2B2" Margin="2.5,0"/>
+            <Button x:Name="resize_default_btn" Content="Default size" Margin="2.5,1.5" Click="resize_default_btn_Click" Background="Gainsboro" BorderBrush="#FFB2B2B2"/>
+            <Button x:Name="uC_status_req_btn" Content="request uC status" Margin="2.5,1.5" Click="uC_status_req_btn_Click" BorderBrush="#FFB2B2B2" Background="Gainsboro"/>
         </ToolBar>
         <Label x:Name="logfile_label2" VerticalAlignment="Bottom" Margin="5,0,5,5" Height="26" Background="#FFF0F0F0" Grid.ColumnSpan="2" Grid.Row="2"/>
         <Label x:Name="con_status_label" Content="Not connected" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="345,56,0,0" Width="89" Height="26" Background="#FFFFC8C8" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="1"/>
