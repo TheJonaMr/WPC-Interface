@@ -105,7 +105,7 @@
                     <Label Content="Communication" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="459,10,0,0" Width="172" Height="26" HorizontalContentAlignment="Center" Background="#FFC7C7C7"/>
                     <CheckBox x:Name="PassExtDataCheckBox" Content="Pass external data" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="459,204,0,0" Click="PassExtDataCheckBox_handle"/>
                     <CheckBox x:Name="powerCheckBox" Content="Power electronics" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="232,41,0,0" Click="powerCheckBox_handle"/>
-                    <CheckBox x:Name="sensorCheckBox" Content="Read sensors" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,41,0,0" Click="sensorCheckBox_handle"/>
+                    <CheckBox x:Name="sensorCheckBox" Content="Read sensors" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,103,0,0" Click="sensorCheckBox_handle"/>
                     <Label Content="Baud Rate:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="459,224,0,0" Width="76" Height="26"/>
                     <ComboBox x:Name="ext_baud_box" HorizontalAlignment="Left" VerticalAlignment="Top" Width="91" Margin="540,226,0,0" SelectedValuePath="Content">
                         <ComboBoxItem Content="1200"/>
@@ -132,6 +132,12 @@
                     <Label Content="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="550,90,0,0" Width="81"/>
                     <Label Content="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="550,116,0,0" Width="81"/>
                     <CheckBox Content="Parity" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="462,70,0,0"/>
+                    <Button x:Name="Vsource_btn" Content="V_Source" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="10,123,0,0" RenderTransformOrigin="-0.947,3.05" Click="Vsource_btn_Click"/>
+                    <Button x:Name="Vsense" Content="V_Sense" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="107,123,0,0" RenderTransformOrigin="-0.947,3.05" Click="Vsense_Click"/>
+                    <TextBox x:Name="Vsense_textbox" HorizontalAlignment="Left" Height="23" Margin="104,45,0,0" TextWrapping="Wrap" Text="0 A" VerticalAlignment="Top" Width="78" IsReadOnly="True" BorderBrush="{x:Null}" Background="{x:Null}"/>
+                    <Label Content="Input Current:" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="Vsource_textbox" HorizontalAlignment="Left" Height="23" Margin="104,76,0,0" TextWrapping="Wrap" Text="0 V" VerticalAlignment="Top" Width="78" IsReadOnly="True" BorderBrush="{x:Null}" Background="{x:Null}"/>
+                    <Label Content="Input Voltage" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Plot">

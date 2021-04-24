@@ -291,8 +291,38 @@ namespace WPC_Interface
                 {
                     string[] string_array = line_buffer.Split(':', '\r', '\n');
                     Byte result = Byte.Parse(string_array[1]);
-                    updateView(result);
+                    statusUpdateView(result);
                 }
+                else if ((byte)line_buffer[0] == 14)
+                {
+                    // Vsense_textbox
+                }
+                else if ((byte)line_buffer[0] == 15)
+                {
+                    // can not get bytes larger than 127, because of serial? Chose to split data into 4.
+                    text = "";
+                    /*byte result0 = (byte)line_buffer[0];
+                    byte result1 = (byte)line_buffer[1];
+                    byte result2 = (byte)line_buffer[2];
+                    byte result3 = (byte)line_buffer[3];
+                    byte result4 = (byte)line_buffer[4];
+                    byte result5 = (byte)line_buffer[5];
+                    byte result6 = (byte)line_buffer[6];*/
+
+                    byte[] bytes = Encoding.ASCII.GetBytes(line_buffer);    // [3]
+
+                    // para.Inlines.Add(((byte)line_buffer[0]).ToString() + " " + ((byte)line_buffer[1]).ToString() + " " + ((byte)line_buffer[2]).ToString() + " " + ((byte)line_buffer[3]).ToString() + " " + ((byte)line_buffer[4]).ToString() + " " + ((byte)line_buffer[5]).ToString() + " " + ((byte)line_buffer[6]).ToString() + "\r\n");
+                    para.Inlines.Add(bytes[0].ToString() + " " + bytes[1].ToString() + " " + bytes[2].ToString() + " " + bytes[3].ToString() + " " + bytes[4].ToString() + " " + bytes[5].ToString() + " " + bytes[6].ToString() + "\r\n");
+
+                    UInt16 measurement = (ushort)(bytes[1] << 12 | bytes[2] << 8 | bytes[3] << 4 | bytes[4]); // Cast to ushort
+                    Double V_BUS = 0;
+                    for (int i = 5; i < 16; i++)
+                    {
+                        if ((measurement & (1 << i)) != 0) V_BUS += 0.019531 * Math.Pow(2, (i - 5));
+                    }
+                    Vsource_textbox.Text = V_BUS.ToString() + " V";
+                }
+
                 line_buffer = "";
             }
 
@@ -594,7 +624,7 @@ namespace WPC_Interface
             SerialCmdSend("6", serial, false);  // Stop/start passthrough to/from USART1 to/from USART3
         }
 
-        private void updateView(Byte value)
+        private void statusUpdateView(Byte value)
         {
             sensorCheckBox.IsChecked = Convert.ToBoolean(value & 1 << 6);
             powerCheckBox.IsChecked = Convert.ToBoolean(value & 1 << 7);
@@ -604,6 +634,18 @@ namespace WPC_Interface
         private void uC_status_req_btn_Click(object sender, RoutedEventArgs e)
         {
             if (serial.IsOpen) SerialCmdSend("2", serial, false);  // Request status from uC
+        }
+
+        private void Vsource_btn_Click(object sender, RoutedEventArgs e)
+        {
+            SerialCmdSend("1", serial, false);  // Put uC in command mode
+            SerialCmdSend("15", serial, false);  // Put uC in command mode
+        }
+
+        private void Vsense_Click(object sender, RoutedEventArgs e)
+        {
+            SerialCmdSend("1", serial, false);  // Put uC in command mode
+            SerialCmdSend("14", serial, false);  // Put uC in command mode
         }
     }
 }
@@ -630,3 +672,10 @@ namespace WPC_Interface
 // Posted:  answered Jul 22 '20 at 6:11
 // Edited:  
 // Read:    2021-02-10
+
+// [2]
+// Where:   https://www.c-sharpcorner.com/article/c-sharp-string-to-byte-array/
+// By:      Mahesh Chand
+// Posted:  
+// Edited:  Updated date Jun 03, 2019
+// Read:    2021-04-24
