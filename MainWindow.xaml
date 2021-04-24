@@ -134,10 +134,12 @@
                     <CheckBox Content="Parity" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="462,70,0,0"/>
                     <Button x:Name="Vsource_btn" Content="V_Source" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="10,123,0,0" RenderTransformOrigin="-0.947,3.05" Click="Vsource_btn_Click"/>
                     <Button x:Name="Vsense" Content="V_Sense" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="107,123,0,0" RenderTransformOrigin="-0.947,3.05" Click="Vsense_Click"/>
-                    <TextBox x:Name="Vsense_textbox" HorizontalAlignment="Left" Height="23" Margin="104,45,0,0" TextWrapping="Wrap" Text="0 A" VerticalAlignment="Top" Width="78" IsReadOnly="True" BorderBrush="{x:Null}" Background="{x:Null}"/>
+                    <TextBox x:Name="Vsense_textbox" HorizontalAlignment="Left" Height="23" Margin="104,45,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="44" IsReadOnly="True" BorderBrush="{x:Null}" Background="{x:Null}"/>
                     <Label Content="Input Current:" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="Vsource_textbox" HorizontalAlignment="Left" Height="23" Margin="104,76,0,0" TextWrapping="Wrap" Text="0 V" VerticalAlignment="Top" Width="78" IsReadOnly="True" BorderBrush="{x:Null}" Background="{x:Null}"/>
+                    <TextBox x:Name="Vsource_textbox" HorizontalAlignment="Left" Height="23" Margin="104,76,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="44" IsReadOnly="True" BorderBrush="{x:Null}" Background="{x:Null}"/>
                     <Label Content="Input Voltage" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
+                    <Label Content="A" HorizontalAlignment="Left" Margin="144,41,0,0" VerticalAlignment="Top"/>
+                    <Label Content="V" HorizontalAlignment="Left" Margin="145,73,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Plot">

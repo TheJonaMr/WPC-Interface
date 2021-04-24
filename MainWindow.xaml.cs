@@ -295,32 +295,28 @@ namespace WPC_Interface
                 }
                 else if ((byte)line_buffer[0] == 14)
                 {
-                    // Vsense_textbox
+                    // can not get bytes larger than 127, because of serial? Chose to split data into 4.
+                    text = "";
+                    byte[] bytes = Encoding.ASCII.GetBytes(line_buffer);    // [3]
+                    UInt16 measurement = (ushort)(bytes[1] << 12 | bytes[2] << 8 | bytes[3] << 4 | bytes[4]); // Cast to ushort
+                    Double I_BUS = 0;
+                    I_BUS = 16 * ((Double) measurement / 2047);     // Convert from RAW to Ampere
+                    I_BUS = Math.Round(I_BUS, 3);                   // Round to 3 decimals
+                    Vsense_textbox.Text = I_BUS.ToString();         // Write converted value to textbox
                 }
                 else if ((byte)line_buffer[0] == 15)
                 {
                     // can not get bytes larger than 127, because of serial? Chose to split data into 4.
                     text = "";
-                    /*byte result0 = (byte)line_buffer[0];
-                    byte result1 = (byte)line_buffer[1];
-                    byte result2 = (byte)line_buffer[2];
-                    byte result3 = (byte)line_buffer[3];
-                    byte result4 = (byte)line_buffer[4];
-                    byte result5 = (byte)line_buffer[5];
-                    byte result6 = (byte)line_buffer[6];*/
-
                     byte[] bytes = Encoding.ASCII.GetBytes(line_buffer);    // [3]
-
-                    // para.Inlines.Add(((byte)line_buffer[0]).ToString() + " " + ((byte)line_buffer[1]).ToString() + " " + ((byte)line_buffer[2]).ToString() + " " + ((byte)line_buffer[3]).ToString() + " " + ((byte)line_buffer[4]).ToString() + " " + ((byte)line_buffer[5]).ToString() + " " + ((byte)line_buffer[6]).ToString() + "\r\n");
-                    para.Inlines.Add(bytes[0].ToString() + " " + bytes[1].ToString() + " " + bytes[2].ToString() + " " + bytes[3].ToString() + " " + bytes[4].ToString() + " " + bytes[5].ToString() + " " + bytes[6].ToString() + "\r\n");
-
                     UInt16 measurement = (ushort)(bytes[1] << 12 | bytes[2] << 8 | bytes[3] << 4 | bytes[4]); // Cast to ushort
                     Double V_BUS = 0;
                     for (int i = 5; i < 16; i++)
                     {
-                        if ((measurement & (1 << i)) != 0) V_BUS += 0.019531 * Math.Pow(2, (i - 5));
+                        if ((measurement & (1 << i)) != 0) V_BUS += 0.019531 * Math.Pow(2, (i - 5));    // Convert from RAW to Voltage
                     }
-                    Vsource_textbox.Text = V_BUS.ToString() + " V";
+                    V_BUS = Math.Round(V_BUS, 3);                   // Round to 3 decimals
+                    Vsource_textbox.Text = V_BUS.ToString();        // Write converted value to textbox
                 }
 
                 line_buffer = "";
@@ -673,7 +669,7 @@ namespace WPC_Interface
 // Edited:  
 // Read:    2021-02-10
 
-// [2]
+// [3]
 // Where:   https://www.c-sharpcorner.com/article/c-sharp-string-to-byte-array/
 // By:      Mahesh Chand
 // Posted:  
