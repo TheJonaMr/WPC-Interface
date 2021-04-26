@@ -21,6 +21,8 @@ using System.IO;            // Used for file access
 
 using LiveCharts;
 using LiveCharts.Wpf;
+using LiveCharts.Configurations;
+using LiveCharts.Helpers;
 
 namespace WPC_Interface
 {
@@ -284,55 +286,137 @@ namespace WPC_Interface
 
         private void WriteData(string text)
         {
-            line_buffer += text;
-            if (line_buffer.Contains("\r\n"))
-            {
-                if (line_buffer.Contains("STATUS"))
-                {
-                    string[] string_array = line_buffer.Split(':', '\r', '\n');
-                    Byte result = Byte.Parse(string_array[1]);
-                    statusUpdateView(result);
-                }
-                else if ((byte)line_buffer[0] == 14)
-                {
-                    // can not get bytes larger than 127, because of serial? Chose to split data into 4.
-                    text = "";
-                    byte[] bytes = Encoding.ASCII.GetBytes(line_buffer);    // [3]
-                    UInt16 measurement = (ushort)(bytes[1] << 12 | bytes[2] << 8 | bytes[3] << 4 | bytes[4]); // Cast to ushort
-                    Double I_BUS = 0;
-                    I_BUS = 16 * ((Double) measurement / 2047);     // Convert from RAW to Ampere
-                    I_BUS = Math.Round(I_BUS, 3);                   // Round to 3 decimals
-                    Vsense_textbox.Text = I_BUS.ToString();         // Write converted value to textbox
-                }
-                else if ((byte)line_buffer[0] == 15)
-                {
-                    // can not get bytes larger than 127, because of serial? Chose to split data into 4.
-                    text = "";
-                    byte[] bytes = Encoding.ASCII.GetBytes(line_buffer);    // [3]
-                    UInt16 measurement = (ushort)(bytes[1] << 12 | bytes[2] << 8 | bytes[3] << 4 | bytes[4]); // Cast to ushort
-                    Double V_BUS = 0;
-                    for (int i = 5; i < 16; i++)
-                    {
-                        if ((measurement & (1 << i)) != 0) V_BUS += 0.019531 * Math.Pow(2, (i - 5));    // Convert from RAW to Voltage
-                    }
-                    V_BUS = Math.Round(V_BUS, 3);                   // Round to 3 decimals
-                    Vsource_textbox.Text = V_BUS.ToString();        // Write converted value to textbox
-                }
-
-                line_buffer = "";
-            }
-
             comm_total += text.Length;
             comm_good += text.Length;
+
+            line_buffer += text;
+            
+            if (line_buffer.Contains("\r\n"))
+            {
+                bool action = false;
+                byte[] initialBytes = Encoding.GetEncoding(28591).GetBytes(line_buffer);    // [3] and [4]
+                /*para.Inlines.Add("\r\n\r\n");
+                para.Inlines.Add("2: " + Array.IndexOf(initialBytes, (byte) 2).ToString() + "\t14:" + Array.IndexOf(initialBytes, (byte) 14).ToString() + "\t15:" + Array.IndexOf(initialBytes, (byte) 15).ToString() + "\t10:" + Array.IndexOf(initialBytes, (byte) 10).ToString() + "\t13:" + Array.IndexOf(initialBytes, (byte) 13).ToString() + "\r\n");
+
+                for (int i = 0; i < initialBytes.Length; i++)
+                {
+                    para.Inlines.Add(initialBytes[i].ToString() + " ");
+                }
+                para.Inlines.Add("\r\n");*/
+
+                if (Array.IndexOf(initialBytes, (byte) 2) >= 0)
+                    {
+                    byte[] bytes = Encoding.GetEncoding(28591).GetBytes(line_buffer);    // [3] and [4]
+                    int startIndex = Array.IndexOf(bytes, (byte) 2);    // SO
+                    int endIndex = Array.IndexOf(bytes, (byte) 10);     // LF
+                    int length = endIndex - startIndex + 1;     // Including the symbol at startIndex
+
+                    if (length == 4)
+                    {
+                        action = true;
+                        statusUpdateView(bytes[startIndex + 1]);
+
+                        line_buffer = line_buffer.Remove(startIndex, length);
+                        bytes = Encoding.GetEncoding(28591).GetBytes(line_buffer);    // [3] and [4], prepare bytes for next if
+
+                        if (!all_raw_en.IsChecked.GetValueOrDefault()) {    // [6], do not show this data in the raw textbox or log
+                            byte[] textBytes = Encoding.GetEncoding(28591).GetBytes(text);    // [3] and [4]
+                            startIndex = Array.IndexOf(textBytes, (byte) 2);    // SO
+                            endIndex = Array.IndexOf(textBytes, (byte) 10);     // LF
+                            length = endIndex - startIndex + 1;     // Including the symbol at startIndex
+                            text = text.Remove(startIndex, length);
+                        }
+                    }
+                }
+
+                if (Array.IndexOf(initialBytes, (byte) 14) >= 0)    // V_SENSE, current measurement incoming
+                {
+                    byte[] bytes = Encoding.GetEncoding(28591).GetBytes(line_buffer);    // [3] and [4]
+                    int startIndex = Array.IndexOf(bytes, (byte) 14);  // SO
+                    int endIndex = Array.IndexOf(bytes, (byte) 10);    // LF
+                    int length = endIndex - startIndex + 1;     // Including the symbol at startIndex
+
+                    if (length == 5)
+                    {
+                        action = true;
+                        Int16 measurement = 0;    // The sensor data is sent as a 16-bit number
+                        measurement = (short)(bytes[startIndex + 1] << 8 | bytes[startIndex + 2] << 0); // Cast to ushort
+
+                        Double I_BUS = 16 * ((Double)(short)measurement / 2047);     // Convert from RAW to Ampere
+                        I_BUS = Math.Round(I_BUS, 3);                   // Round to 3 decimals
+                        Vsense_textbox.Text = I_BUS.ToString();         // Write converted value to textbox
+                        SeriesCollection[0].Values.Add(I_BUS);
+                        if (SeriesCollection[0].Values.Count >= 31) SeriesCollection[0].Values.RemoveAt(0);
+
+                        line_buffer = line_buffer.Remove(startIndex, length);
+                        bytes = Encoding.GetEncoding(28591).GetBytes(line_buffer);    // [3] and [4], prepare bytes for next if
+
+                        if (!all_raw_en.IsChecked.GetValueOrDefault())
+                        {    // [6], do not show this data in the raw textbox or log
+                            byte[] textBytes = Encoding.GetEncoding(28591).GetBytes(text);    // [3] and [4]
+                            startIndex = Array.IndexOf(textBytes, (byte) 14);    // SO
+                            endIndex = Array.IndexOf(textBytes, (byte) 10);     // LF
+                            length = endIndex - startIndex + 1;     // Including the symbol at startIndex
+                            text = text.Remove(startIndex, length);
+                        }
+                    }
+                }
+
+                if (Array.IndexOf(initialBytes, (byte) 15) >= 0)    // V_SOURCE
+                {
+                    byte[] bytes = Encoding.GetEncoding(28591).GetBytes(line_buffer);    // [3] and [4]
+                    int startIndex = Array.IndexOf(bytes, (byte) 15);  // SO
+                    int endIndex = Array.IndexOf(bytes, (byte) 10);    // LF
+                    int length = endIndex - startIndex + 1;     // Including the symbol at startIndex
+
+                    if (length == 5)
+                    {
+                        action = true;
+                        Int16 measurement = 0;  // The sensor data is sent as a 16-bit number
+                        measurement = (short)(bytes[startIndex + 1] << 8 | bytes[startIndex + 2] << 0); // Cast to short (this is a signed value)
+
+                        Double V_BUS = 0;
+                        for (int i = 5; i < 16; i++)
+                        {
+                            if ((measurement & (1 << i)) != 0) V_BUS += 0.019531 * Math.Pow(2, (i - 5));    // Convert from RAW to Voltage
+                        }
+                        V_BUS = Math.Round(V_BUS, 3);                   // Round to 3 decimals
+                        Vsource_textbox.Text = V_BUS.ToString();        // Write converted value to textbox
+                        SeriesCollection[1].Values.Add(V_BUS);
+                        if (SeriesCollection[1].Values.Count >= 31) SeriesCollection[1].Values.RemoveAt(0);
+
+                        line_buffer = line_buffer.Remove(startIndex, length);
+                        bytes = Encoding.GetEncoding(28591).GetBytes(line_buffer);    // [3] and [4], prepare bytes for next if
+
+                        if (!all_raw_en.IsChecked.GetValueOrDefault())  // THIS DOES NOT WORK AS PART OF LINE_BUFFER MIGHT HAVE BEEN RECEIVED AT THE PREVIOUS ITERATION
+                        {    // [6], do not show this data in the raw textbox or log
+                            byte[] textBytes = Encoding.GetEncoding(28591).GetBytes(text);    // [3] and [4]
+                            startIndex = Array.IndexOf(textBytes, (byte) 15);    // SO
+                            endIndex = Array.IndexOf(textBytes, (byte) 10);     // LF
+                            length = endIndex - startIndex + 1;     // Including the symbol at startIndex
+                            text = text.Remove(startIndex, length);
+
+                        }
+                    }
+                }
+
+                if (!action) line_buffer = "";
+            }
 
             comm_total_label.Content = "T: " + comm_total.ToString();
             comm_good_label.Content = "G: " + comm_good.ToString();
             comm_rate_label.Content = "R: " + (100 * comm_bad / comm_total).ToString() + " %";
 
-            SeriesCollection[2].Values.Add(Convert.ToDouble(comm_total));
+            // SeriesCollection[2].Values.Add(Convert.ToDouble(comm_total));
 
             if (raw_en.IsChecked.Value)
             {
+                // Make sure only ASCII is printed to the raw view [7]
+                byte[] asciiBytes = Encoding.ASCII.GetBytes(text);
+                char[] asciiChars = new char[Encoding.ASCII.GetCharCount(asciiBytes, 0, asciiBytes.Length)];
+                Encoding.ASCII.GetChars(asciiBytes, 0, asciiBytes.Length, asciiChars, 0);
+                text = new string(asciiChars);
+
                 // Assign the value of the recieved_data to the RichTextBox.
                 para.Inlines.Add(text);
                 mcFlowDoc.Blocks.Add(para);
@@ -435,6 +519,9 @@ namespace WPC_Interface
                 serial.ReadTimeout = 200;
                 serial.WriteTimeout = 50;
 
+                // Previously only 7-bit symbols could be read (ASCII probably), now 8-bit can be read from the port.
+                serial.Encoding = Encoding.GetEncoding(28591); // [5] and [4]
+
                 serial.Open();
 
                 BrushConverter bc = new BrushConverter();
@@ -518,30 +605,33 @@ namespace WPC_Interface
             {
                 new LineSeries
                 {
-                    Title = "Series 1",     // Optional
-                    PointGeometry = null,   // Optional
-                    PointGeometrySize = 15, // Optional
-                    Values = new ChartValues<double> { 3, 5, 7, 4 }
+                    Title = "Current measurement [A]",     // Optional
+                    //PointGeometry = null,   // Optional
+                    //PointGeometrySize = 15, // Optional
+
+                    Values = new ChartValues<double> { 0 },
+                    LineSmoothness = 0 //0: straight lines, 1: really smooth lines
                 },
-                new ColumnSeries
+                new LineSeries // ColumnSeries
                 {
-                    Title = "Series 2",
-                    Values = new ChartValues<decimal> { 5, 6, 2, 7 }
+                    Title = "Voltage measurement [V]",
+                    Values = new ChartValues<double> { 0 }, // ChartValues<decimal> { 0 }
+                    LineSmoothness = 0 //0: straight lines, 1: really smooth lines
                 }
             };
 
-            Labels = new[] { "Jan", "Feb", "Mar", "Apr", "May" };
-            YFormatter = value => value.ToString("C");
+            /*Labels = new[] { "Jan", "Feb", "Mar", "Apr", "May" };
+            YFormatter = value => value.ToString("C");*/
 
             //modifying the series collection will animate and update the chart
-            SeriesCollection.Add(new LineSeries
+            /*SeriesCollection.Add(new LineSeries
             {
-                Values = new ChartValues<double> { 5, 3, 2, 4 },
+                Values = new ChartValues<double> { 0 },
                 LineSmoothness = 0 //straight lines, 1 really smooth lines
-            });
+            });*/
 
             //modifying any series values will also animate and update the chart
-            SeriesCollection[2].Values.Add(5d);
+            // SeriesCollection[2].Values.Add(5d);
 
             DataContext = this;
 
@@ -674,4 +764,32 @@ namespace WPC_Interface
 // By:      Mahesh Chand
 // Posted:  
 // Edited:  Updated date Jun 03, 2019
+// Read:    2021-04-24
+
+// [4]
+// Where:   https://stackoverflow.com/a/7178744
+// By:      Waylon Flinn
+// Posted:  answered Aug 24 '11 at 16:11 
+// Edited:  edited Aug 25 '11 at 15:13
+// Read:    2021-04-24
+
+// [5]
+// Where:   https://stackoverflow.com/a/2714679
+// By:      MusiGenesis
+// Posted:  answered Apr 26 '10 at 15:30
+// Edited:  edited Apr 26 '10 at 18:24
+// Read:    2021-04-24
+
+// [6]
+// Where:   https://stackoverflow.com/a/6075800
+// By:      Joel Briggs
+// Posted:  answered May 20 '11 at 17:52
+// Edited:  edited Nov 12 '13 at 14:19
+// Read:    2021-04-24
+
+// [7]
+// Where:   https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.convert?view=net-5.0
+// By:      Microsoft
+// Posted:  
+// Edited:  
 // Read:    2021-04-24

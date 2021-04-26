@@ -87,8 +87,8 @@
                     </ComboBox>
                     <GroupBox Header="Send as String / Number" HorizontalAlignment="Left" Height="54" Margin="10,287,0,0" VerticalAlignment="Top" Width="172"/>
                     <StackPanel HorizontalAlignment="Left" Height="30" Margin="22,307,0,0" VerticalAlignment="Top" Width="154">
-                        <RadioButton x:Name="as_text" Content="String/ASCII" IsChecked="True" Checked="as_text_Checked"/>
-                        <RadioButton x:Name="as_number" Content="Number (no trail)" Checked="as_number_Checked"/>
+                        <RadioButton x:Name="as_text" Content="ASCII string" IsChecked="True" Checked="as_text_Checked"/>
+                        <RadioButton x:Name="as_number" Content="8-bit number (no trail)" Checked="as_number_Checked"/>
                     </StackPanel>
                     <StackPanel HorizontalAlignment="Left" Height="63" Margin="22,219,0,0" VerticalAlignment="Top" Width="152">
                         <RadioButton x:Name="trail_return" Content="\r&#x9;Carriage Retrun" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="trail_return_Checked"/>
@@ -140,6 +140,7 @@
                     <Label Content="Input Voltage" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
                     <Label Content="A" HorizontalAlignment="Left" Margin="144,41,0,0" VerticalAlignment="Top"/>
                     <Label Content="V" HorizontalAlignment="Left" Margin="145,73,0,0" VerticalAlignment="Top"/>
+                    <Image HorizontalAlignment="Left" Height="100" Margin="291,177,0,0" VerticalAlignment="Top" Width="100"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Plot">
@@ -161,7 +162,7 @@
         <Label x:Name="comm_good_label" Content="G: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="94,56,0,0" Width="90" Height="26" RenderTransformOrigin="0.441,0.513" Background="#FFF0F0F0" Grid.Column="1" Grid.Row="1"/>
         <Label x:Name="comm_total_label" Content="T: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="4,56,0,0" Width="90" Height="26" Background="#FFF0F0F0" Grid.Column="1" Grid.Row="1"/>
         <Button x:Name="clr_btn" Content="Clear" VerticalAlignment="Top" Margin="0,3,7,0" Click="clr_btn_Click" Grid.Column="1" Height="20" Grid.Row="1" HorizontalAlignment="Right" Width="75"/>
-        <CheckBox x:Name="raw_en" Content="Print raw data" VerticalAlignment="Top" Margin="82,6,0,0" IsChecked="True" Grid.Column="1" Height="15" Grid.Row="1" HorizontalAlignment="Left" Width="94"/>
+        <CheckBox x:Name="raw_en" Content="Print raw data" VerticalAlignment="Top" Margin="82,6,0,0" IsChecked="True" Grid.Column="1" Height="15" Grid.Row="1" HorizontalAlignment="Left" Width="94" RenderTransformOrigin="0.569,0.667"/>
         <CheckBox x:Name="auto_scroll_raw" Content="Autoscroll" VerticalAlignment="Top" Margin="4,6,0,0" IsChecked="True" Grid.Column="1" Height="15" Grid.Row="1" HorizontalAlignment="Left" Width="73"/>
         <TextBox x:Name="Send_box" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Margin="79,28,115,0" VerticalContentAlignment="Center" KeyUp="TextBox_KeyEnterUpdate" Grid.Column="1" Grid.Row="1">
             <!--<TextBox.InputBindings>
@@ -170,5 +171,6 @@
         </TextBox>
         <Button x:Name="Send_btn" Content="Send" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Margin="4,28,0,0" Height="23" Click="Send_btn_Click" Grid.Column="1" Grid.Row="1"/>
         <CheckBox x:Name="clear_send_chk" Content="Clear after send" VerticalAlignment="Top" Margin="0,33,7,0" IsChecked="True" Grid.Column="1" Height="15" Grid.Row="1" HorizontalAlignment="Right" Width="103"/>
+        <CheckBox x:Name="all_raw_en" Content="Print all raw data" VerticalAlignment="Top" Margin="181,6,0,0" Grid.Column="1" Height="15" Grid.Row="1" HorizontalAlignment="Left" Width="112" IsEnabled="False" IsChecked="True"/>
     </Grid>
 </Window>
