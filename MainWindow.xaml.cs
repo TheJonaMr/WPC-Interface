@@ -138,7 +138,7 @@ namespace WPC_Interface
                     desc[counter] = s;
 
                     // This fixes an issue where the order of the COM port names doesn't appear in the expected order.
-                    string[] coms = s.Split('(', ')');
+                    string[] coms = s.Split('(', ')'); // Index was outside the bounds of the array.'
                     foreach (string sub in coms)
                     {
                         if (sub.Contains("COM"))
@@ -304,7 +304,7 @@ namespace WPC_Interface
                 }
                 para.Inlines.Add("\r\n");*/
 
-                if (Array.IndexOf(initialBytes, (byte) 2) >= 0)
+                if (Array.IndexOf(initialBytes, (byte) 2) == 0)
                     {
                     byte[] bytes = Encoding.GetEncoding(28591).GetBytes(line_buffer);    // [3] and [4]
                     int startIndex = Array.IndexOf(bytes, (byte) 2);    // SO
@@ -317,7 +317,7 @@ namespace WPC_Interface
                         statusUpdateView(bytes[startIndex + 1]);
 
                         line_buffer = line_buffer.Remove(startIndex, length);
-                        bytes = Encoding.GetEncoding(28591).GetBytes(line_buffer);    // [3] and [4], prepare bytes for next if
+                        initialBytes = Encoding.GetEncoding(28591).GetBytes(line_buffer);    // [3] and [4], prepare bytes for next if
 
                         if (!all_raw_en.IsChecked.GetValueOrDefault()) {    // [6], do not show this data in the raw textbox or log
                             byte[] textBytes = Encoding.GetEncoding(28591).GetBytes(text);    // [3] and [4]
@@ -329,7 +329,7 @@ namespace WPC_Interface
                     }
                 }
 
-                if (Array.IndexOf(initialBytes, (byte) 14) >= 0)    // V_SENSE, current measurement incoming
+                if (Array.IndexOf(initialBytes, (byte) 14) == 0)    // V_SENSE, current measurement incoming
                 {
                     byte[] bytes = Encoding.GetEncoding(28591).GetBytes(line_buffer);    // [3] and [4]
                     int startIndex = Array.IndexOf(bytes, (byte) 14);  // SO
@@ -349,7 +349,7 @@ namespace WPC_Interface
                         if (SeriesCollection[0].Values.Count >= 31) SeriesCollection[0].Values.RemoveAt(0);
 
                         line_buffer = line_buffer.Remove(startIndex, length);
-                        bytes = Encoding.GetEncoding(28591).GetBytes(line_buffer);    // [3] and [4], prepare bytes for next if
+                        initialBytes = Encoding.GetEncoding(28591).GetBytes(line_buffer);    // [3] and [4], prepare bytes for next if
 
                         if (!all_raw_en.IsChecked.GetValueOrDefault())
                         {    // [6], do not show this data in the raw textbox or log
@@ -362,7 +362,7 @@ namespace WPC_Interface
                     }
                 }
 
-                if (Array.IndexOf(initialBytes, (byte) 15) >= 0)    // V_SOURCE
+                if (Array.IndexOf(initialBytes, (byte) 15) == 0)    // V_SOURCE
                 {
                     byte[] bytes = Encoding.GetEncoding(28591).GetBytes(line_buffer);    // [3] and [4]
                     int startIndex = Array.IndexOf(bytes, (byte) 15);  // SO
@@ -386,7 +386,7 @@ namespace WPC_Interface
                         if (SeriesCollection[1].Values.Count >= 31) SeriesCollection[1].Values.RemoveAt(0);
 
                         line_buffer = line_buffer.Remove(startIndex, length);
-                        bytes = Encoding.GetEncoding(28591).GetBytes(line_buffer);    // [3] and [4], prepare bytes for next if
+                        initialBytes = Encoding.GetEncoding(28591).GetBytes(line_buffer);    // [3] and [4], prepare bytes for next if
 
                         if (!all_raw_en.IsChecked.GetValueOrDefault())  // THIS DOES NOT WORK AS PART OF LINE_BUFFER MIGHT HAVE BEEN RECEIVED AT THE PREVIOUS ITERATION
                         {    // [6], do not show this data in the raw textbox or log
