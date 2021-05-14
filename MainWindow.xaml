@@ -157,7 +157,7 @@
         </ToolBar>
         <Label x:Name="logfile_label2" VerticalAlignment="Bottom" Margin="5,0,5,5" Height="26" Background="#FFF0F0F0" Grid.ColumnSpan="2" Grid.Row="2"/>
         <Label x:Name="con_status_label" Content="Not connected" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="345,56,0,0" Width="89" Height="26" Background="#FFFFC8C8" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="1"/>
-        <Label x:Name="comm_rate_label" Content="R: 0%" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="274,56,0,0" Width="71" Height="26" Background="#FFF0F0F0" Grid.Column="1" Grid.Row="1"/>
+        <Label x:Name="comm_rate_label" Content="R: 0 %" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="274,56,0,0" Width="71" Height="26" Background="#FFF0F0F0" Grid.Column="1" Grid.Row="1"/>
         <Label x:Name="comm_bad_label" Content="B: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="184,56,0,0" Width="90" Height="26" Background="#FFF0F0F0" Grid.Column="1" Grid.Row="1"/>
         <Label x:Name="comm_good_label" Content="G: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="94,56,0,0" Width="90" Height="26" RenderTransformOrigin="0.441,0.513" Background="#FFF0F0F0" Grid.Column="1" Grid.Row="1"/>
         <Label x:Name="comm_total_label" Content="T: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="4,56,0,0" Width="90" Height="26" Background="#FFF0F0F0" Grid.Column="1" Grid.Row="1"/>

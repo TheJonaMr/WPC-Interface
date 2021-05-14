@@ -16,7 +16,11 @@
     </Window.CommandBindings>
 
     <Grid>
-        <ListView x:Name="lvPorts" Margin="332,10,10,10" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="166*"/>
+            <ColumnDefinition Width="265*"/>
+        </Grid.ColumnDefinitions>
+        <ListView x:Name="lvPorts" Margin="0.5,10,10,10" ScrollViewer.HorizontalScrollBarVisibility="Auto" Grid.Column="1">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="COM Port" Width="75" DisplayMemberBinding="{Binding COM}" />
@@ -31,9 +35,9 @@
         <Label Content="Description:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,69,0,0"/>
         <Label Content="Manufacturer:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,97,0,0"/>
         <Label x:Name="___No_Name__Copy" Content="Add ports that contains the following:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
-        <TextBox x:Name="COM_f" TextWrapping="Wrap" Margin="99,44,534,261" VerticalContentAlignment="Center"/>
-        <TextBox x:Name="MAN_f" TextWrapping="Wrap" Margin="99,100,534,205" VerticalContentAlignment="Center"/>
-        <TextBox x:Name="DESC_f" TextWrapping="Wrap" Margin="99,72,534,233" VerticalContentAlignment="Center"/>
+        <TextBox x:Name="COM_f" TextWrapping="Wrap" Margin="99,41,4.5,261" VerticalContentAlignment="Center"/>
+        <TextBox x:Name="MAN_f" TextWrapping="Wrap" Margin="99,97,4.5,205" VerticalContentAlignment="Center"/>
+        <TextBox x:Name="DESC_f" TextWrapping="Wrap" Margin="99,69,4.5,233" VerticalContentAlignment="Center"/>
         <Button x:Name="Help" Content="Help" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="10,298,0,0" Click="Help_Click"/>
 
     </Grid>

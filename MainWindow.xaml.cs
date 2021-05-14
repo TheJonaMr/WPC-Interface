@@ -340,9 +340,9 @@ namespace WPC_Interface
                     {
                         action = true;
                         Int16 measurement = 0;    // The sensor data is sent as a 16-bit number
-                        measurement = (short)(bytes[startIndex + 1] << 8 | bytes[startIndex + 2] << 0); // Cast to ushort
+                        measurement = (short)(bytes[startIndex + 1] << 8 | bytes[startIndex + 2] << 0); // Cast to short
 
-                        Double I_BUS = 16 * ((Double)(short)measurement / 2047);     // Convert from RAW to Ampere
+                        Double I_BUS = 16 * ((Double)measurement / 2047);     // Convert from RAW to Ampere
                         I_BUS = Math.Round(I_BUS, 3);                   // Round to 3 decimals
                         Vsense_textbox.Text = I_BUS.ToString();         // Write converted value to textbox
                         SeriesCollection[0].Values.Add(I_BUS);
@@ -373,12 +373,14 @@ namespace WPC_Interface
                     {
                         action = true;
                         Int16 measurement = 0;  // The sensor data is sent as a 16-bit number
-                        measurement = (short)(bytes[startIndex + 1] << 8 | bytes[startIndex + 2] << 0); // Cast to short (this is a signed value)
+                        // Cast to short (this is a signed value)
+                        measurement = (short)(bytes[startIndex + 1] << 8 | bytes[startIndex + 2] << 0); 
 
                         Double V_BUS = 0;
+                        // Convert from RAW to Voltage
                         for (int i = 5; i < 16; i++)
                         {
-                            if ((measurement & (1 << i)) != 0) V_BUS += 0.019531 * Math.Pow(2, (i - 5));    // Convert from RAW to Voltage
+                            if ((measurement & (1 << i)) != 0) V_BUS += 0.019531 * Math.Pow(2, (i - 5));    
                         }
                         V_BUS = Math.Round(V_BUS, 3);                   // Round to 3 decimals
                         Vsource_textbox.Text = V_BUS.ToString();        // Write converted value to textbox
